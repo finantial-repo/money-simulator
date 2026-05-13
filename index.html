@@ -147,6 +147,24 @@ input[type=number]:focus,select:focus{outline:none;border-color:var(--gold)}
 
 <div class="container">
 
+<!-- ===== ACCESS BLOCKED (デフォルト表示) ===== -->
+<div id="blockedMsg" style="text-align:center;padding:48px 16px;">
+  <div style="background:#1a1a2e;border-radius:12px;padding:36px 24px;max-width:480px;margin:0 auto;">
+    <p style="font-size:10px;font-weight:700;color:#c0a060;letter-spacing:3px;margin:0 0 14px;">MONEY CLASSROOM</p>
+    <p style="font-size:20px;font-weight:700;color:#ffffff;margin:0 0 12px;line-height:1.4;">サイト経由でご利用ください</p>
+    <p style="font-size:13px;color:#aab8cc;line-height:1.8;margin:0 0 26px;">
+      このシミュレーターは<br>
+      <strong style="color:#e8d5a0;">Money Classroom サイト</strong>の<br>
+      「シミュレーターを開く」ボタンからのみ<br>ご利用いただけます。</p>
+    <a href="https://moneykyoshitsu.wordpress.com/" style="display:inline-block;background:#e8a020;color:#fff;font-size:14px;font-weight:700;padding:13px 30px;border-radius:7px;text-decoration:none;letter-spacing:0.04em;">
+      Money Classroom へ →</a>
+    <p style="font-size:11px;color:#445566;margin:16px 0 0;">無料・登録不要で利用できます</p>
+  </div>
+</div>
+
+<!-- ===== MAIN CONTENT (WordPress経由のみ表示) ===== -->
+<div id="mainContent" style="display:none">
+
 <!-- ======================== FORM ======================== -->
 <form id="simForm">
 
@@ -416,18 +434,20 @@ input[type=number]:focus,select:focus{outline:none;border-color:var(--gold)}
   <div class="wp-link"><a href="https://moneykyoshitsu.wordpress.com">← Money Classroom の記事に戻る</a></div>
   <button type="button" class="btn-calc btn-back" style="margin-top:16px" onclick="backToForm()">入力に戻って再計算する</button>
 </div>
+</div><!-- /mainContent -->
 </div><!-- /container -->
 
 <script>
 // =====================================================
-// ACCESS GUARD — WordPress経由以外はリダイレクト
+// ACCESS GUARD — WordPress経由のみコンテンツを表示
 // =====================================================
 (function(){
-  const p = new URLSearchParams(window.location.search);
-  const hasToken    = p.has('ref') || p.has('takehome');
-  const fromWP      = document.referrer.includes('moneykyoshitsu.wordpress.com');
-  if (!hasToken && !fromWP) {
-    window.location.replace('https://moneykyoshitsu.wordpress.com/');
+  const p       = new URLSearchParams(window.location.search);
+  const hasToken = p.has('ref') || p.has('takehome');
+  const fromWP   = document.referrer.includes('moneykyoshitsu.wordpress.com');
+  if (hasToken || fromWP) {
+    document.getElementById('blockedMsg').style.display   = 'none';
+    document.getElementById('mainContent').style.display  = 'block';
   }
 })();
 
