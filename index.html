@@ -579,7 +579,7 @@ function simulateAtRate(params, annualRate) {
           lifeEvents, homeEvent, otherEvents } = params;
   const years = retireAge - age;
   const results = [];
-  let iDecoBalance = 0, nisaBalance = 0;
+  let iDecoBalance = 0, nisaBalance = params.existingSavings || 0;
 
   for (let y = 0; y <= years; y++) {
     const curAge = age + y;
@@ -694,6 +694,7 @@ function calculate() {
     taxSavingYear: idecoSaving, freeMonth, freeCap,
     salaryGrowthRate: salaryGrowth, inflation,
     selectedIdx, lifeEvents, homeEvent, otherEvents,
+    existingSavings: savings,
     income, si, spouse, kids,
   };
   const simResults = simulate(simParams);
