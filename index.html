@@ -140,7 +140,7 @@ input[type=number]:focus,select:focus{outline:none;border-color:var(--gold)}
 </head>
 <body>
 <header class="site-header">
-  <a href="https://moneykyoshitsu.wordpress.com/2026/05/14/home-top/">← Money Classroom トップへ戻る</a>
+  <a href="https://moneykyoshitsu.com/">← マネー教室 トップへ戻る</a>
 </header>
 <div class="hero">
   <h1><span>資産形成シミュレーター</span><br>iDeCo・NISA 最適配分＆将来資産診断</h1>
@@ -156,10 +156,10 @@ input[type=number]:focus,select:focus{outline:none;border-color:var(--gold)}
     <p style="font-size:20px;font-weight:700;color:#ffffff;margin:0 0 12px;line-height:1.4;">サイト経由でご利用ください</p>
     <p style="font-size:13px;color:#aab8cc;line-height:1.8;margin:0 0 26px;">
       このシミュレーターは<br>
-      <strong style="color:#e8d5a0;">Money Classroom サイト</strong>の<br>
+      <strong style="color:#e8d5a0;">マネー教室 サイト</strong>の<br>
       「シミュレーターを開く」ボタンからのみ<br>ご利用いただけます。</p>
-    <a href="https://moneykyoshitsu.wordpress.com/2026/05/14/home-top/" style="display:inline-block;background:#e8a020;color:#fff;font-size:14px;font-weight:700;padding:13px 30px;border-radius:7px;text-decoration:none;letter-spacing:0.04em;">
-      Money Classroom へ →</a>
+    <a href="https://moneykyoshitsu.com/" style="display:inline-block;background:#e8a020;color:#fff;font-size:14px;font-weight:700;padding:13px 30px;border-radius:7px;text-decoration:none;letter-spacing:0.04em;">
+      マネー教室 へ →</a>
     <p style="font-size:11px;color:#445566;margin:16px 0 0;">無料・登録不要で利用できます</p>
   </div>
 </div>
@@ -433,7 +433,7 @@ input[type=number]:focus,select:focus{outline:none;border-color:var(--gold)}
     <div id="ctaBtns"></div>
     <p class="cta-note">※ 口座開設は無料。すぐに投資を始める必要はありません。<br>※ 上記リンクはアフィリエイトリンクを含む場合があります。</p>
   </div>
-  <div class="wp-link"><a href="https://moneykyoshitsu.wordpress.com/2026/05/14/home-top/">← Money Classroom の記事に戻る</a></div>
+  <div class="wp-link"><a href="https://moneykyoshitsu.com/">← マネー教室 の記事に戻る</a></div>
   <button type="button" class="btn-calc btn-back" style="margin-top:16px" onclick="backToForm()">入力に戻って再計算する</button>
 </div>
 </div><!-- /mainContent -->
@@ -446,7 +446,7 @@ input[type=number]:focus,select:focus{outline:none;border-color:var(--gold)}
 (function(){
   const p       = new URLSearchParams(window.location.search);
   const hasToken = p.has('ref') || p.has('takehome');
-  const fromWP   = document.referrer.includes('moneykyoshitsu.wordpress.com');
+  const fromWP   = document.referrer.includes('moneykyoshitsu.com') || document.referrer.includes('moneykyoshitsu.wordpress.com');
   if (hasToken || fromWP) {
     document.getElementById('blockedMsg').style.display   = 'none';
     document.getElementById('mainContent').style.display  = 'block';
@@ -826,8 +826,8 @@ function calculate(){
     ?`年${Math.round(idecoSaving*10)/10}万円の節税を今すぐ始められます。口座開設は無料・5分。`
     :'NISAで非課税の資産形成を始めましょう。';
   document.getElementById('ctaBtns').innerHTML=
-    `<a href="https://moneykyoshitsu.wordpress.com/ideco-myth-debunked/" class="cta-btn">iDeCo詳細記事を読む</a>
-     <a href="https://moneykyoshitsu.wordpress.com/new-nisa-explained/" class="cta-btn sec">NISA詳細記事を読む</a>`;
+    `<a href="https://moneykyoshitsu.com/ideco-myth-debunked/" class="cta-btn">iDeCo詳細記事を読む</a>
+     <a href="https://moneykyoshitsu.com/new-nisa-explained/" class="cta-btn sec">NISA詳細記事を読む</a>`;
 }
 
 function backToForm(){
