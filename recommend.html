@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>証券口座・クレカ最適診断｜キャリア・ライフスタイル別おすすめ</title>
+<meta name="description" content="キャリア・年間支出・ライフスタイルを入力するだけで、最適な証券口座・クレジットカード・投資戦略を自動診断。富裕層向け証券担保ローン戦略も提示。">
+<meta name="keywords" content="証券口座おすすめ,クレジットカード比較,クレカ積立,キャリア別,陸マイラー,証券担保ローン">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#1a1a2e;--navy2:#2a2a4e;
+  --gold:#c0a060;--gold-light:#e8d5a0;
+  --bg:#fafaf7;--card:#fff;--text:#2c2c2c;--muted:#666;
+  --border:#e0d8c8;
+  --green:#2e7d32;--green-bg:#e8f5e9;
+  --blue:#1565c0;--blue-bg:#e3f2fd;
+  --amber:#e65100;--amber-bg:#fff3e0;
+  --red:#c62828;--red-bg:#ffebee;
+  --purple:#6a1b9a;--purple-bg:#f3e5f5;
+}
+body{font-family:'Hiragino Kaku Gothic ProN','Hiragino Sans','Yu Gothic Medium',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;font-size:15px}
+a{color:var(--blue)}
+
+.site-header{background:var(--navy);padding:14px 20px;text-align:center}
+.site-header a{color:var(--gold-light);font-size:13px;text-decoration:none;opacity:.8}
+
+.hero{background:linear-gradient(135deg,var(--navy) 0%,var(--navy2) 100%);color:#fff;padding:36px 20px 28px;text-align:center}
+.hero h1{font-size:clamp(16px,3.5vw,22px);font-weight:700;margin-bottom:8px;line-height:1.4}
+.hero h1 span{color:var(--gold-light)}
+.hero p{font-size:13px;color:#aab8cc;max-width:500px;margin:0 auto}
+
+.container{max-width:780px;margin:0 auto;padding:20px 14px 80px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:22px 18px;margin-bottom:14px}
+.card-title{font-size:11px;font-weight:700;color:var(--gold);letter-spacing:2px;margin-bottom:16px;border-bottom:1px solid var(--border);padding-bottom:8px}
+
+.field{margin-bottom:14px}
+.field label{display:block;font-size:13px;font-weight:700;color:var(--navy);margin-bottom:6px}
+.field label .sub{font-size:11px;font-weight:400;color:var(--muted);margin-left:6px}
+input[type=number],select{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:6px;font-size:15px;color:var(--text);background:#fff;-webkit-appearance:none}
+input[type=number]:focus,select:focus{outline:none;border-color:var(--gold)}
+.input-row{display:flex;align-items:center;gap:8px}
+.input-row input,.input-row select{flex:1}
+.unit{font-size:13px;color:var(--muted);white-space:nowrap}
+.hint{font-size:12px;color:var(--muted);margin-top:3px}
+
+.radio-group{display:flex;gap:7px;flex-wrap:wrap}
+.radio-group label{display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer;padding:7px 12px;border:1.5px solid var(--border);border-radius:6px;transition:all .15s;line-height:1.3}
+.radio-group label:has(input:checked){border-color:var(--navy);background:#f0f0f8;font-weight:700}
+.radio-group input[type=radio]{accent-color:var(--navy)}
+
+.check-group{display:flex;gap:7px;flex-wrap:wrap}
+.check-group label{display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer;padding:7px 12px;border:1.5px solid var(--border);border-radius:6px;transition:all .15s}
+.check-group label:has(input:checked){border-color:var(--purple);background:var(--purple-bg);font-weight:700}
+.check-group input[type=checkbox]{accent-color:var(--purple)}
+
+.btn-diagnose{width:100%;padding:16px;background:var(--navy);color:#fff;border:none;border-radius:8px;font-size:16px;font-weight:700;cursor:pointer;letter-spacing:.05em;transition:opacity .15s}
+.btn-diagnose:hover{opacity:.85}
+
+/* 結果エリア */
+#result{display:none}
+.result-section{margin-bottom:20px}
+.result-header{display:flex;align-items:center;gap:10px;margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid var(--navy)}
+.result-header .rank-badge{background:var(--navy);color:var(--gold-light);font-size:12px;font-weight:700;padding:4px 10px;border-radius:4px;letter-spacing:1px}
+.result-header h3{font-size:16px;font-weight:700;color:var(--navy)}
+
+.rec-card{border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:10px}
+.rec-card-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--bg)}
+.rec-card-header .rec-name{font-size:14px;font-weight:700;color:var(--navy)}
+.rec-card-header .rec-badge{font-size:11px;font-weight:700;padding:3px 9px;border-radius:10px}
+.badge-green{background:var(--green-bg);color:var(--green)}
+.badge-blue{background:var(--blue-bg);color:var(--blue)}
+.badge-amber{background:var(--amber-bg);color:var(--amber)}
+.badge-gold{background:#fdf8ed;color:#b8860b;border:1px solid #e0d0a0}
+.rec-card-body{padding:12px 16px;font-size:13px;color:#555;line-height:1.8;border-top:1px solid var(--border)}
+.rec-card-body strong{color:var(--navy)}
+.rec-card-body table{width:100%;border-collapse:collapse;margin-top:8px;font-size:12px}
+.rec-card-body table th{background:#f5f5f5;padding:6px 10px;text-align:left;font-weight:700;color:var(--navy);border-bottom:1px solid var(--border)}
+.rec-card-body table td{padding:6px 10px;border-bottom:1px solid var(--border);color:#555}
+.rec-card-body table tr:last-child td{border-bottom:none}
+
+.combo-box{background:linear-gradient(135deg,#fdf8f0,#fff);border:2px solid var(--gold);border-radius:10px;padding:18px 20px;margin:16px 0}
+.combo-box .combo-title{font-size:12px;font-weight:700;color:#b8860b;letter-spacing:2px;margin-bottom:10px}
+.combo-box .combo-main{font-size:15px;font-weight:700;color:var(--navy);margin-bottom:6px}
+.combo-box .combo-pts{font-size:13px;color:#555;line-height:1.8}
+
+.warn-box{background:var(--red-bg);border:1px solid #e8c4c0;border-left:4px solid var(--red);border-radius:0 6px 6px 0;padding:14px 16px;margin:12px 0;font-size:13px;color:#555}
+.info-box{background:var(--blue-bg);border:1px solid #b8d0ef;border-left:4px solid var(--blue);border-radius:0 6px 6px 0;padding:14px 16px;margin:12px 0;font-size:13px;color:#555}
+.tip-box{background:var(--green-bg);border:1px solid #b8dfc7;border-left:4px solid var(--green);border-radius:0 6px 6px 0;padding:14px 16px;margin:12px 0;font-size:13px;color:#555}
+
+.asset-strategy{background:var(--navy);color:#fff;border-radius:10px;padding:20px 18px;margin-top:16px}
+.asset-strategy h4{font-size:14px;font-weight:700;color:var(--gold-light);margin-bottom:12px;letter-spacing:.05em}
+.asset-strategy ul{padding-left:18px}
+.asset-strategy li{font-size:13px;color:#c8d8ea;line-height:1.9;margin-bottom:4px}
+
+.points-summary{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
+.points-box{border:1px solid var(--border);border-radius:8px;padding:14px;text-align:center}
+.points-box .pts-label{font-size:11px;color:var(--muted);margin-bottom:4px}
+.points-box .pts-val{font-size:20px;font-weight:700;color:var(--navy)}
+.points-box .pts-unit{font-size:11px;color:var(--muted);margin-top:2px}
+
+.wp-link-box{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:16px;text-align:center;margin-top:20px}
+.wp-link-box a{display:inline-block;background:var(--navy);color:#fff;padding:12px 32px;border-radius:6px;text-decoration:none;font-size:14px;font-weight:700;margin-top:8px}
+
+/* ブロックメッセージ */
+#blockedMsg{padding:60px 20px;text-align:center;background:var(--navy);min-height:60vh;display:flex;flex-direction:column;align-items:center;justify-content:center}
+#blockedMsg h2{color:var(--gold-light);font-size:20px;margin-bottom:12px}
+#blockedMsg p{color:#aab8cc;font-size:14px;margin-bottom:24px}
+#blockedMsg a{display:inline-block;background:var(--gold);color:var(--navy);padding:14px 36px;border-radius:8px;text-decoration:none;font-size:15px;font-weight:700}
+#mainContent{display:none}
+</style>
+</head>
+<body>
+
+<div id="blockedMsg">
+  <h2>🔒 アクセス制限</h2>
+  <p>このツールは Money Classroom からのアクセス専用です。</p>
+  <a href="https://moneykyoshitsu.wordpress.com/2026/05/14/home-top/">Money Classroom に移動する</a>
+</div>
+
+<div id="mainContent">
+
+<div class="site-header">
+  <a href="https://moneykyoshitsu.wordpress.com/2026/05/14/home-top/">← Money Classroom トップへ</a>
+</div>
+
+<div class="hero">
+  <h1>証券口座・クレカ <span>最適診断</span></h1>
+  <p>キャリア・年間支出・ライフスタイルから、あなたに最適な<br>証券口座・クレジットカード・投資戦略を自動で診断します</p>
+</div>
+
+<div class="container">
+
+<!-- ━━ 入力フォーム ━━ -->
+<div class="card" id="formSection">
+  <div class="card-title">STEP 1｜基本情報</div>
+
+  <div class="field">
+    <label>携帯キャリア</label>
+    <div class="radio-group">
+      <label><input type="radio" name="carrier" value="docomo"> NTTdocomo</label>
+      <label><input type="radio" name="carrier" value="au"> au</label>
+      <label><input type="radio" name="carrier" value="softbank"> SoftBank / Y!mobile</label>
+      <label><input type="radio" name="carrier" value="rakuten"> 楽天モバイル</label>
+      <label><input type="radio" name="carrier" value="other"> その他/格安SIM</label>
+    </div>
+  </div>
+
+  <div class="field">
+    <label>月の平均クレジットカード利用額 <span class="sub">（現金・QR払い除く）</span></label>
+    <div class="input-row">
+      <input type="number" id="monthlySpend" min="0" max="200" value="10" step="1">
+      <span class="unit">万円 / 月</span>
+    </div>
+    <div class="hint">クレカ積立・公共料金・日用品・食費など全て含む</div>
+  </div>
+
+  <div class="field">
+    <label>そのうち「旅行・交通費」の割合</label>
+    <div class="radio-group">
+      <label><input type="radio" name="travelRatio" value="5"> ほぼなし（〜5%）</label>
+      <label><input type="radio" name="travelRatio" value="20"> やや多い（10〜30%）</label>
+      <label><input type="radio" name="travelRatio" value="40"> 多い（30〜50%）</label>
+      <label><input type="radio" name="travelRatio" value="60"> 非常に多い（50%超）</label>
+    </div>
+  </div>
+
+  <div class="field">
+    <label>事業・法人経費の支払い</label>
+    <div class="radio-group">
+      <label><input type="radio" name="business" value="none"> なし（個人のみ）</label>
+      <label><input type="radio" name="business" value="small"> 少し（月〜30万円）</label>
+      <label><input type="radio" name="business" value="large"> 多い（月30万円〜）</label>
+    </div>
+  </div>
+
+  <div class="card-title" style="margin-top:20px;">STEP 2｜資産・投資状況</div>
+
+  <div class="field">
+    <label>現在の金融資産総額（不動産除く）</label>
+    <div class="radio-group" id="assetGroup">
+      <label><input type="radio" name="assets" value="low"> 〜500万円</label>
+      <label><input type="radio" name="assets" value="mid"> 500万〜3,000万円</label>
+      <label><input type="radio" name="assets" value="high"> 3,000万〜1億円</label>
+      <label><input type="radio" name="assets" value="wealthy"> 1億円〜</label>
+    </div>
+  </div>
+
+  <div class="field">
+    <label>現在の投資状況</label>
+    <div class="check-group">
+      <label><input type="checkbox" id="hasNisa"> NISAを使っている</label>
+      <label><input type="checkbox" id="hasIdeco"> iDeCoを使っている</label>
+      <label><input type="checkbox" id="hasStock"> 個別株・ETFを保有</label>
+      <label><input type="checkbox" id="hasNoInvest"> まだ何も投資していない</label>
+    </div>
+  </div>
+
+  <div class="card-title" style="margin-top:20px;">STEP 3｜ライフスタイル（複数選択可）</div>
+
+  <div class="field">
+    <div class="check-group">
+      <label><input type="checkbox" id="ls_travel"> ✈️ 国内外旅行が好き</label>
+      <label><input type="checkbox" id="ls_business"> 💼 出張が多い / 事業者</label>
+      <label><input type="checkbox" id="ls_amazon"> 📦 Amazonをよく使う</label>
+      <label><input type="checkbox" id="ls_rakuten"> 🛒 楽天市場をよく使う</label>
+      <label><input type="checkbox" id="ls_restaurant"> 🍽️ 外食・グルメが好き</label>
+      <label><input type="checkbox" id="ls_family"> 👨‍👩‍👧 子供がいる / 教育費重視</label>
+      <label><input type="checkbox" id="ls_cospa"> 💰 とにかくコスパ重視</label>
+      <label><input type="checkbox" id="ls_lounge"> 🛋️ 空港ラウンジを使いたい</label>
+    </div>
+  </div>
+
+  <button class="btn-diagnose" onclick="diagnose()">診断する →</button>
+</div>
+
+<!-- ━━ 結果エリア ━━ -->
+<div id="result">
+  <div class="card" id="resultSummary"></div>
+  <div class="card" id="resultBroker"></div>
+  <div class="card" id="resultCard"></div>
+  <div class="card" id="resultStrategy"></div>
+  <div class="card" id="resultPoints"></div>
+
+  <div class="wp-link-box">
+    <p style="font-size:13px;color:#666;">さらに詳しい解説・各制度の仕組みは</p>
+    <a href="https://moneykyoshitsu.wordpress.com/2026/05/14/home-top/">Money Classroom で学ぶ →</a>
+  </div>
+</div>
+
+</div><!-- /container -->
+</div><!-- /mainContent -->
+
+<script>
+// アクセスガード
+(function(){
+  const p=new URLSearchParams(window.location.search);
+  const hasToken=p.has('ref')||p.has('mode');
+  const fromWP=document.referrer.includes('moneykyoshitsu.wordpress.com');
+  if(hasToken||fromWP){
+    document.getElementById('blockedMsg').style.display='none';
+    document.getElementById('mainContent').style.display='block';
+  }
+})();
+
+// ━━ データ定義 ━━
+
+const BROKERS = {
+  sbi: {
+    name:"SBI証券",
+    strong:["三井住友カード連携","クレカ積立最高3%","Tポイント/Vポイント利用","IPO実績No.1"],
+    weak:["単体での特別な楽天連携はなし"],
+    tsumitate_rate: {
+      "三井住友プラチナプリファード":3.0,
+      "三井住友ゴールドNL":1.0,
+      "三井住友カード一般":0.5,
+    },
+    url:"https://www.sbisec.co.jp/"
+  },
+  rakuten: {
+    name:"楽天証券",
+    strong:["楽天カード積立1%","楽天SPU+1倍以上","楽天ポイント運用可","使いやすいUI"],
+    weak:["楽天モバイル以外は恩恵が薄い","楽天改悪リスクあり"],
+    tsumitate_rate:{"楽天カード":1.0},
+    url:"https://www.rakuten-sec.co.jp/"
+  },
+  monex: {
+    name:"マネックス証券",
+    strong:["マネックスカード積立1.1%（業界最高水準）","米国株の充実","NISA移管が容易"],
+    weak:["ポイント汎用性が低い","UI老舗感あり"],
+    tsumitate_rate:{"マネックスカード":1.1},
+    url:"https://www.monex.co.jp/"
+  },
+  au: {
+    name:"auカブコム証券",
+    strong:["auPAYカード積立1%","au PAYとの連携","auじぶん銀行との金利優遇"],
+    weak:["au系以外との相性が薄い","投資ラインナップはやや少ない"],
+    tsumitate_rate:{"au PAYカード":1.0},
+    url:"https://kabu.com/"
+  },
+};
+
+const CARDS = {
+  smcc_platinum: {
+    name:"三井住友プラチナプリファード",
+    annual:33000,
+    base_rate:1.0,
+    sbi_rate:3.0,
+    miles_rate:0,
+    lounge:true,
+    business:false,
+    tag:"コスパ最強積立",
+    color:"badge-green",
+    summary:"SBI証券のクレカ積立で年率3.0%還元。年間支出が多い人ほど恩恵大。SBI証券との組み合わせが前提。"
+  },
+  smcc_gold: {
+    name:"三井住友カード ゴールドNL",
+    annual:5500,
+    base_rate:0.5,
+    sbi_rate:1.0,
+    miles_rate:0,
+    lounge:true,
+    business:false,
+    tag:"低コスト×積立",
+    color:"badge-blue",
+    summary:"年会費5,500円（年100万円利用で翌年以降永年無料）。SBI証券積立で1.0%還元。コスパが高く初心者にも向く。"
+  },
+  ana_amex_gold: {
+    name:"ANAアメックスゴールド",
+    annual:34100,
+    base_rate:1.0,
+    sbi_rate:0,
+    miles_rate:1.0,
+    lounge:true,
+    business:false,
+    tag:"マイル最強",
+    color:"badge-amber",
+    summary:"ANA/JALマイル直接還元1.0%。空港ラウンジ（プライオリティパス）。海外旅行が年1〜2回ある人で元が取れる。"
+  },
+  spg_amex: {
+    name:"マリオットボンヴォイ アメックス",
+    annual:49500,
+    base_rate:3.0,
+    sbi_rate:0,
+    miles_rate:1.25,
+    lounge:false,
+    business:false,
+    tag:"ホテル×マイル",
+    color:"badge-amber",
+    summary:"ポイント→ANAマイル1.25%相当。無料宿泊特典（年1泊）。ホテルポイントの汎用性が高く旅行好きに最適。"
+  },
+  amex_business_gold: {
+    name:"アメリカン・エキスプレス ビジネスゴールド",
+    annual:36300,
+    base_rate:1.0,
+    sbi_rate:0,
+    miles_rate:0.5,
+    lounge:true,
+    business:true,
+    tag:"法人・事業向け",
+    color:"badge-gold",
+    summary:"法人経費の支出管理・明細管理に最適。補償・旅行保険が手厚い。個人口座と分けて経費計上できる。"
+  },
+  smcc_business: {
+    name:"三井住友ビジネスカード for Owners",
+    annual:1375,
+    base_rate:0.5,
+    sbi_rate:0.5,
+    miles_rate:0,
+    lounge:false,
+    business:true,
+    tag:"低コスト法人",
+    color:"badge-blue",
+    summary:"年会費最安水準の個人事業主向けビジネスカード。SBI積立も対応。法人口座引き落とし可能（要審査）。"
+  },
+  manex: {
+    name:"マネックスカード",
+    annual:550,
+    base_rate:1.0,
+    sbi_rate:0,
+    miles_rate:0,
+    lounge:false,
+    business:false,
+    tag:"積立特化",
+    color:"badge-green",
+    summary:"業界最高水準の1.1%積立還元。年会費実質無料（年1回以上利用で翌年無料）。マネックス証券専用。"
+  },
+  rakuten_gold: {
+    name:"楽天プレミアムカード",
+    annual:11000,
+    base_rate:1.0,
+    sbi_rate:0,
+    miles_rate:0,
+    lounge:true,
+    business:false,
+    tag:"楽天最強",
+    color:"badge-blue",
+    summary:"プライオリティパス付き（年会費込みで実質最安水準）。楽天SPUで楽天での還元率が大幅アップ。"
+  },
+};
+
+// ━━ 診断メイン ━━
+
+function diagnose(){
+  const carrier=document.querySelector('input[name="carrier"]:checked')?.value;
+  const travelRatio=parseInt(document.querySelector('input[name="travelRatio"]:checked')?.value||5);
+  const business=document.querySelector('input[name="business"]:checked')?.value||'none';
+  const assets=document.querySelector('input[name="assets"]:checked')?.value||'low';
+  const monthlySpend=parseFloat(document.getElementById('monthlySpend').value)||10;
+  const annualSpend=monthlySpend*12;
+
+  const hasNisa=document.getElementById('hasNisa').checked;
+  const hasIdeco=document.getElementById('hasIdeco').checked;
+  const hasStock=document.getElementById('hasStock').checked;
+
+  const ls_travel=document.getElementById('ls_travel').checked;
+  const ls_business=document.getElementById('ls_business').checked;
+  const ls_amazon=document.getElementById('ls_amazon').checked;
+  const ls_rakuten=document.getElementById('ls_rakuten').checked;
+  const ls_lounge=document.getElementById('ls_lounge').checked;
+  const ls_family=document.getElementById('ls_family').checked;
+  const ls_cospa=document.getElementById('ls_cospa').checked;
+
+  if(!carrier){alert('携帯キャリアを選択してください');return;}
+  if(!document.querySelector('input[name="travelRatio"]:checked')){alert('旅行割合を選択してください');return;}
+  if(!document.querySelector('input[name="assets"]:checked')){alert('資産額を選択してください');return;}
+
+  // ── ブローカー選定 ──
+  let brokerRecs=[];
+  if(carrier==='rakuten'||ls_rakuten){
+    brokerRecs.push({key:'rakuten',reason:'楽天モバイル利用でSPU加算。楽天経済圏との相性が抜群です。'});
+  }
+  if(carrier==='au'){
+    brokerRecs.push({key:'au',reason:'auカブコム証券×au PAYカードで積立1.0%。au経済圏で完結する一体型戦略。'});
+  }
+  // マネックスは積立還元率最高なので広くおすすめ
+  if(!ls_rakuten||(ls_cospa&&carrier!=='rakuten')){
+    brokerRecs.push({key:'monex',reason:'クレカ積立還元率1.1%（業界最高水準）。月5万円積立で年6,600円相当のポイント獲得。'});
+  }
+  // SBIは汎用的に最強
+  brokerRecs.push({key:'sbi',reason:'IPO実績No.1・商品ラインナップ最多。三井住友カードとの組み合わせで最大3.0%積立還元が可能。'});
+  // 重複除去・最大3件
+  const seen=new Set();
+  brokerRecs=brokerRecs.filter(b=>{if(seen.has(b.key))return false;seen.add(b.key);return true;}).slice(0,3);
+
+  // ── カード選定 ──
+  let cardRecs=[];
+  const isHighSpender=annualSpend>=120; // 年120万円以上
+  const isTraveler=ls_travel||travelRatio>=20||ls_lounge;
+  const isBiz=ls_business||business!=='none';
+
+  if(isBiz&&business==='large'){
+    cardRecs.push({key:'amex_business_gold',reason:'月30万円超の事業経費を専用カードで管理。法人税の経費算入・明細管理が容易になります。'});
+  }
+  if(isBiz){
+    cardRecs.push({key:'smcc_business',reason:'個人事業主向けの低コストビジネスカード。SBI証券積立も可能で事業と投資を一枚で対応。'});
+  }
+  if(isTraveler&&annualSpend>=120){
+    cardRecs.push({key:'spg_amex',reason:'ホテルポイントをANAマイルに1.25%相当で交換可能。年1泊の無料宿泊特典で年会費の元が取れる旅行好きに最適。'});
+    cardRecs.push({key:'ana_amex_gold',reason:'ANAマイル直還元1.0%。プライオリティパス付き（年会費込み）。年2回以上の海外渡航がある方に推奨。'});
+  }
+  if(isHighSpender&&!isTraveler){
+    cardRecs.push({key:'smcc_platinum',reason:'SBI証券積立で3.0%還元。年間支出が多いほど得になる積立特化カード。'});
+  }
+  if(carrier==='rakuten'||ls_rakuten){
+    if(ls_lounge||isTraveler){
+      cardRecs.push({key:'rakuten_gold',reason:'プライオリティパス付き最安水準カード。楽天SPU対象で楽天市場での還元が+1倍以上。'});
+    }
+  }
+  // 汎用コスパカード
+  if(ls_cospa||(!isTraveler&&!isBiz)){
+    cardRecs.push({key:'smcc_gold',reason:'年100万円利用で翌年から永年無料。SBI積立1.0%＋ラウンジ付き。コスパ最強の一枚。'});
+    cardRecs.push({key:'manex',reason:'積立還元率1.1%。実質年会費無料。マネックス証券との組み合わせで最大限活用できます。'});
+  }
+  const seenC=new Set();
+  cardRecs=cardRecs.filter(c=>{if(seenC.has(c.key))return false;seenC.add(c.key);return true;}).slice(0,3);
+
+  // ── ポイント試算（メインカードベース） ──
+  const mainCard=CARDS[cardRecs[0]?.key]||CARDS['smcc_gold'];
+  const tsumitateMonthly=Math.min(monthlySpend, 5); // 積立は最大5万円
+  const mainBroker=BROKERS[brokerRecs[0]?.key]||BROKERS['sbi'];
+  const tsumitateRate=Object.values(mainBroker.tsumitate_rate)[0]||1.0;
+  const annualTsumitatePts=tsumitateMonthly*12*10000*(tsumitateRate/100);
+  const annualOtherPts=(annualSpend-tsumitateMonthly*12)*10000*(mainCard.base_rate/100);
+  const totalPts=Math.round(annualTsumitatePts+annualOtherPts);
+  const mileConvert=mainCard.miles_rate>0?Math.round(annualSpend*12*10000*(mainCard.miles_rate/100)/12)*12:0;
+
+  // ── 投資戦略 ──
+  const strategyItems=[];
+  if(!hasNisa) strategyItems.push({icon:'🏦',title:'新NISAを今すぐ開始する',desc:'年360万円・生涯1,800万円の非課税枠。まずつみたて投資枠（年120万円）から始める。'});
+  if(!hasIdeco&&assets!=='low') strategyItems.push({icon:'💰',title:'iDeCoで節税しながら老後資産を作る',desc:'年収400万円以上なら毎月2〜2.3万円のiDeCo拠出で年3〜7万円の節税が可能。'});
+  if(assets==='mid'||assets==='high'){
+    strategyItems.push({icon:'📊',title:'特定口座で高配当ETF・個別株を保有',desc:'NISA枠を使い切った後、特定口座で高配当株・ETFを保有し配当控除戦略を活用。'});
+  }
+  if(assets==='high'){
+    strategyItems.push({icon:'🏢',title:'不動産・REITでインフレヘッジ',desc:'金融資産3,000万円超になったら不動産投資信託（REIT）や区分マンション投資も検討価値あり。'});
+  }
+  if(assets==='wealthy'){
+    strategyItems.push({icon:'💳',title:'証券担保ローン（コムストックローン）の活用',desc:'SBI証券で株式・投信を担保に年率2.8〜4.8%で最大5億円を借入。売却せずに資金調達。信用情報に影響なし。'});
+    strategyItems.push({icon:'🌐',title:'オルタナティブ投資（PE・プライベートデット）',desc:'ヘッジファンド・プライベートエクイティへの投資で期待リターン9%超。銀行系の資産管理サービスの活用を推奨。'});
+    strategyItems.push({icon:'📝',title:'生前贈与×暦年贈与の本格的な相続対策',desc:'資産1億円超なら毎年110万円×複数の受贈者への贈与を早期開始。7年ルールを逆算した計画が必要。'});
+  }
+  if(ls_family) strategyItems.push({icon:'👶',title:'2027年こどもNISAで子供の資産形成',desc:'2027年開始予定のこどもNISA（年60万円）。祖父母からの暦年贈与と組み合わせて最大効果。'});
+
+  // ━━ HTML生成 ━━
+
+  // サマリー
+  document.getElementById('resultSummary').innerHTML=`
+    <div class="card-title">診断結果サマリー</div>
+    <div class="combo-box">
+      <div class="combo-title">あなたに最適な組み合わせ</div>
+      <div class="combo-main">🏦 ${BROKERS[brokerRecs[0].key].name} ＋ 💳 ${CARDS[cardRecs[0].key].name}</div>
+      <div class="combo-pts">
+        年間獲得ポイント推定：<strong style="color:#1a1a2e;font-size:18px;">${totalPts.toLocaleString()} ポイント相当</strong>
+        ${mileConvert>0?`<br>マイル換算：<strong>年間約${mileConvert.toLocaleString()} マイル</strong>相当`:''}
+      </div>
+    </div>
+    <div class="points-summary">
+      <div class="points-box">
+        <div class="pts-label">積立ポイント（月${tsumitateMonthly}万円）</div>
+        <div class="pts-val">${Math.round(annualTsumitatePts).toLocaleString()}</div>
+        <div class="pts-unit">pt / 年</div>
+      </div>
+      <div class="points-box">
+        <div class="pts-label">通常利用ポイント</div>
+        <div class="pts-val">${Math.round(annualOtherPts).toLocaleString()}</div>
+        <div class="pts-unit">pt / 年</div>
+      </div>
+    </div>
+    ${carrier==='rakuten'?'<div class="tip-box">楽天モバイルのSPU（スーパーポイントアッププログラム）と組み合わせると、楽天市場での還元率がさらに+1〜3倍になります。楽天証券・楽天カードもSPU対象です。</div>':''}
+    ${carrier==='au'?'<div class="tip-box">au経済圏（auカブコム証券＋au PAYカード＋auじぶん銀行）を連携させると、定期預金金利0.3%優遇も適用されます。</div>':''}
+  `;
+
+  // 証券口座
+  document.getElementById('resultBroker').innerHTML=`
+    <div class="card-title">おすすめ証券口座</div>
+    ${brokerRecs.map((b,i)=>`
+      <div class="rec-card">
+        <div class="rec-card-header">
+          <div class="rec-name">${i===0?'🥇 ':'🥈 '}${BROKERS[b.key].name}</div>
+          <span class="rec-badge ${i===0?'badge-green':'badge-blue'}">${i===0?'最優先':'サブ口座候補'}</span>
+        </div>
+        <div class="rec-card-body">
+          <p>${b.reason}</p>
+          <table style="margin-top:10px">
+            <tr><th>強み</th><td>${BROKERS[b.key].strong.join('・')}</td></tr>
+            <tr><th>積立還元率</th><td>${Object.entries(BROKERS[b.key].tsumitate_rate).map(([k,v])=>`${k}：<strong>${v}%</strong>`).join(' / ')}</td></tr>
+          </table>
+        </div>
+      </div>
+    `).join('')}
+    <div class="info-box">💡 複数の証券口座を活用することで、損益通算による節税効果も生まれます。詳細は <a href="https://moneykyoshitsu.wordpress.com/multi-account-benefits/">複数口座のメリット</a> をご覧ください。</div>
+  `;
+
+  // クレジットカード
+  document.getElementById('resultCard').innerHTML=`
+    <div class="card-title">おすすめクレジットカード</div>
+    ${cardRecs.map((c,i)=>{
+      const card=CARDS[c.key];
+      return `
+      <div class="rec-card">
+        <div class="rec-card-header">
+          <div class="rec-name">${i===0?'🥇 ':'🥈 '}${card.name}</div>
+          <span class="rec-badge ${card.color}">${card.tag}</span>
+        </div>
+        <div class="rec-card-body">
+          <p>${c.reason}</p>
+          <table style="margin-top:10px">
+            <tr><th>年会費</th><td><strong>${card.annual.toLocaleString()}円</strong></td></tr>
+            <tr><th>基本還元率</th><td>${card.base_rate}%${card.miles_rate>0?` / マイル${card.miles_rate}%`:''}${card.sbi_rate>0?` / SBI積立${card.sbi_rate}%`:''}</td></tr>
+            <tr><th>ラウンジ</th><td>${card.lounge?'✅ 対応（空港ラウンジ）':'－'}</td></tr>
+            <tr><th>法人・事業</th><td>${card.business?'✅ 法人口座引き落とし可':'個人向け'}</td></tr>
+          </table>
+        </div>
+      </div>`;
+    }).join('')}
+    ${isTraveler?`<div class="tip-box">✈️ <strong>マイル最大化のコツ：</strong>ANAカード・JALカードのマイルを「特典航空券」に交換すると実質還元率が3〜5%に上がります。ビジネスクラスへの交換が最もコスパが高い使い方です。</div>`:''}
+    ${isBiz?`<div class="info-box">💼 <strong>法人カードの使い方：</strong>事業経費を個人カードと分離することで、確定申告の際の経費算入が容易になります。アメックス系は明細のCSV出力が優れており、会計ソフトとの連携がスムーズです。</div>`:''}
+  `;
+
+  // 投資戦略
+  document.getElementById('resultStrategy').innerHTML=`
+    <div class="card-title">あなたへの投資戦略</div>
+    ${strategyItems.map(s=>`
+      <div style="display:flex;gap:12px;padding:14px 0;border-bottom:1px solid var(--border);">
+        <div style="font-size:22px;flex-shrink:0;">${s.icon}</div>
+        <div>
+          <p style="font-size:14px;font-weight:700;color:var(--navy);margin-bottom:4px;">${s.title}</p>
+          <p style="font-size:13px;color:#555;line-height:1.8;">${s.desc}</p>
+        </div>
+      </div>
+    `).join('')}
+    ${assets==='wealthy'?`
+      <div class="asset-strategy">
+        <h4>富裕層向け：証券担保ローン（コムストックローン）の活用</h4>
+        <ul>
+          <li>保有株式・投資信託を<strong style="color:var(--gold-light);">売らずに</strong>現金を調達できる</li>
+          <li>年率2.8〜4.8%（SBIコムストックローン）で30万〜5億円を借入可能</li>
+          <li>個人信用情報機関への報告なし（他のローン審査に影響しない）</li>
+          <li>相続税の納税資金確保・追加投資機会への迅速対応に活用</li>
+          <li>株価上昇期待を保ちながら低利で資金化できる（ただし担保割れリスクに注意）</li>
+        </ul>
+      </div>
+    `:''}
+  `;
+
+  // 次のステップ
+  document.getElementById('resultPoints').innerHTML=`
+    <div class="card-title">次のステップ</div>
+    <div style="counter-reset:step">
+      ${[
+        '生活防衛資金（月の生活費×3〜6ヶ月）を確保する（普通預金・高金利ネット定期に置く）',
+        hasNisa?'NISAの積立額と対象商品を最適化する':'新NISAの口座を開設し、低コストインデックスファンドの積立を開始する',
+        `${BROKERS[brokerRecs[0].key].name}に口座開設し、${CARDS[cardRecs[0].key].name}でのクレカ積立を設定する`,
+        hasIdeco?'iDeCoの運用商品を見直す（低コストインデックスファンドに変更）':'iDeCo口座を開設し掛金設定をする（月収の10〜15%が目安）',
+        '毎年確定申告で損益通算・配当控除の活用を検討する',
+      ].map(t=>`<div style="list-style:none;padding:12px 0;border-bottom:1px solid var(--border);font-size:14px;color:#444;padding-left:32px;position:relative;counter-increment:step">
+        <span style="position:absolute;left:0;background:var(--navy);color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;top:14px">${'<span style=counter:step></span>'}</span>
+        ${t}
+      </div>`).join('')}
+    </div>
+    <div class="warn-box" style="margin-top:16px;">⚠️ 本診断は一般的な情報提供を目的とした参考情報です。金融商品の選択は各自の状況・リスク許容度をもとにご判断ください。クレジットカードの審査通過は保証できません。</div>
+  `;
+
+  document.getElementById('result').style.display='block';
+  document.getElementById('result').scrollIntoView({behavior:'smooth'});
+}
+</script>
+</body>
+</html>
