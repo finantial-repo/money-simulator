@@ -114,14 +114,14 @@ input[type=number]:focus,select:focus{outline:none;border-color:var(--gold)}
 
 <div id="blockedMsg">
   <h2>🔒 アクセス制限</h2>
-  <p>このツールは Money Classroom からのアクセス専用です。</p>
-  <a href="https://moneykyoshitsu.wordpress.com/2026/05/14/home-top/">Money Classroom に移動する</a>
+  <p>このツールは マネー教室 からのアクセス専用です。</p>
+  <a href="https://moneykyoshitsu.com/">マネー教室 に移動する</a>
 </div>
 
 <div id="mainContent">
 
 <div class="site-header">
-  <a href="https://moneykyoshitsu.wordpress.com/2026/05/14/home-top/">← Money Classroom トップへ</a>
+  <a href="https://moneykyoshitsu.com/">← マネー教室 トップへ</a>
 </div>
 
 <div class="hero">
@@ -224,7 +224,7 @@ input[type=number]:focus,select:focus{outline:none;border-color:var(--gold)}
 
   <div class="wp-link-box">
     <p style="font-size:13px;color:#666;">さらに詳しい解説・各制度の仕組みは</p>
-    <a href="https://moneykyoshitsu.wordpress.com/2026/05/14/home-top/">Money Classroom で学ぶ →</a>
+    <a href="https://moneykyoshitsu.com/">マネー教室 で学ぶ →</a>
   </div>
 </div>
 
@@ -236,7 +236,7 @@ input[type=number]:focus,select:focus{outline:none;border-color:var(--gold)}
 (function(){
   const p=new URLSearchParams(window.location.search);
   const hasToken=p.has('ref')||p.has('mode');
-  const fromWP=document.referrer.includes('moneykyoshitsu.wordpress.com');
+  const fromWP=document.referrer.includes('moneykyoshitsu.com') || document.referrer.includes('moneykyoshitsu.wordpress.com');
   if(hasToken||fromWP){
     document.getElementById('blockedMsg').style.display='none';
     document.getElementById('mainContent').style.display='block';
@@ -529,7 +529,7 @@ function diagnose(){
         </div>
       </div>
     `).join('')}
-    <div class="info-box">💡 複数の証券口座を活用することで、損益通算による節税効果も生まれます。詳細は <a href="https://moneykyoshitsu.wordpress.com/multi-account-benefits/">複数口座のメリット</a> をご覧ください。</div>
+    <div class="info-box">💡 複数の証券口座を活用することで、損益通算による節税効果も生まれます。詳細は <a href="https://moneykyoshitsu.com/multi-account-benefits/">複数口座のメリット</a> をご覧ください。</div>
   `;
 
   // クレジットカード
