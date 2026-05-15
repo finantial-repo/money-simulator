@@ -3,884 +3,863 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>iDeCo・NISA シミュレーター｜手取りから将来資産・節税額を無料計算</title>
-<meta name="description" content="手取り・支出を入力するだけでiDeCoの節税額・NISAの最適配分・将来資産を自動計算。オルカン・S&P500・Nasdaq-100比較、悲観シナリオも同時表示。無料・登録不要。">
-<meta name="keywords" content="iDeCoシミュレーター,手取り計算,NISA計算,節税額シミュレーション,将来資産計算,iDeCo節税,老後資金シミュレーター">
-<link rel="canonical" href="https://finantial-repo.github.io/money-simulator/">
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<title>資産形成シミュレーター｜iDeCo・NISA・保険 最適配分診断</title>
+<meta name="description" content="年収・年齢・家族構成を入力するだけで、iDeCo・NISAへの最適な掛け金と節税額、保険の必要性を自動診断。口座開設まで一気通貫でサポート。">
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --navy:#1a1a2e;--navy2:#2a2a4e;
-  --gold:#c0a060;--gold-light:#e8d5a0;
-  --bg:#fafaf7;--card:#fff;--text:#2c2c2c;--muted:#666;
-  --border:#e0d8c8;
-  --green:#2e7d32;--green-bg:#e8f5e9;
-  --blue:#1565c0;--blue-bg:#e3f2fd;
-  --amber:#e65100;--amber-bg:#fff3e0;
-}
-body{font-family:'Hiragino Kaku Gothic ProN','Hiragino Sans','Yu Gothic Medium',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;font-size:15px}
-a{color:var(--blue)}
-.site-header{background:var(--navy);padding:14px 20px;text-align:center}
-.site-header a{color:var(--gold-light);font-size:13px;text-decoration:none;opacity:.8}
-.site-header a:hover{opacity:1}
-.hero{background:linear-gradient(135deg,var(--navy) 0%,var(--navy2) 100%);color:#fff;padding:36px 20px 28px;text-align:center}
-.hero h1{font-size:clamp(16px,3.5vw,24px);font-weight:700;margin-bottom:8px;line-height:1.4}
-.hero h1 span{color:var(--gold-light)}
-.hero p{font-size:13px;color:#aab8cc;max-width:540px;margin:0 auto}
-.container{max-width:780px;margin:0 auto;padding:24px 14px 80px}
-.card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:22px 18px;margin-bottom:14px}
-.card-title{font-size:11px;font-weight:700;color:var(--gold);letter-spacing:2px;margin-bottom:16px;border-bottom:1px solid var(--border);padding-bottom:8px}
-.field{margin-bottom:14px}
-.field label{display:block;font-size:13px;font-weight:700;color:var(--navy);margin-bottom:4px}
-.field label .sub{font-size:11px;font-weight:400;color:var(--muted);margin-left:4px}
-input[type=number],select{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:6px;font-size:15px;color:var(--text);background:#fff;transition:border-color .2s;-webkit-appearance:none}
-input[type=number]:focus,select:focus{outline:none;border-color:var(--gold)}
-.input-row{display:flex;align-items:center;gap:8px}
-.input-row input,.input-row select{flex:1}
-.unit{font-size:13px;color:var(--muted);white-space:nowrap}
-.hint{font-size:12px;color:var(--muted);margin-top:3px}
-.radio-group{display:flex;gap:7px;flex-wrap:wrap}
-.radio-group label{display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer;padding:6px 11px;border:1.5px solid var(--border);border-radius:6px;transition:all .15s;line-height:1.3}
-.radio-group label:has(input:checked){border-color:var(--navy);background:#f0f0f8;font-weight:700}
-.radio-group input[type=radio]{accent-color:var(--navy)}
-.check-group{display:flex;gap:7px;flex-wrap:wrap}
-.check-group label{display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer;padding:6px 11px;border:1.5px solid var(--border);border-radius:6px;transition:all .15s}
-.check-group label:has(input:checked){border-color:var(--navy);background:#f0f0f8;font-weight:700}
-.check-group input[type=checkbox]{accent-color:var(--navy);width:15px;height:15px}
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --navy: #1a1a2e;
+    --gold: #c0a060;
+    --gold-light: #e8d5a0;
+    --bg: #fafaf7;
+    --card: #ffffff;
+    --text: #2c2c2c;
+    --muted: #666;
+    --border: #e0d8c8;
+    --green: #2e7d32;
+    --green-light: #e8f5e9;
+    --red: #c62828;
+    --red-light: #ffebee;
+    --blue: #1565c0;
+    --blue-light: #e3f2fd;
+    --amber: #e65100;
+    --amber-light: #fff3e0;
+  }
+  body { font-family: 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Yu Gothic Medium', sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; }
 
-/* 余裕資金サマリー */
-.budget-summary{background:var(--navy);border-radius:8px;padding:16px 18px;margin:14px 0}
-.budget-summary .bs-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid #2a3a5e;font-size:13px}
-.budget-summary .bs-row:last-child{border-bottom:none;padding-top:8px;margin-top:4px}
-.budget-summary .bs-label{color:#aab8cc}
-.budget-summary .bs-val{color:#fff;font-weight:700}
-.budget-summary .bs-row.total .bs-label{color:var(--gold-light);font-weight:700;font-size:14px}
-.budget-summary .bs-row.total .bs-val{color:var(--gold-light);font-size:18px}
-.budget-summary .bs-row.invest .bs-label{color:#86efac}
-.budget-summary .bs-row.invest .bs-val{color:#86efac;font-size:16px}
+  /* HEADER */
+  .site-header { background: var(--navy); padding: 16px 20px; text-align: center; }
+  .site-header a { color: var(--gold-light); font-size: 14px; text-decoration: none; opacity: .8; }
+  .site-header a:hover { opacity: 1; }
 
-.collapsible-btn{width:100%;background:none;border:1.5px dashed var(--border);border-radius:8px;padding:11px 16px;font-size:13px;font-weight:700;color:var(--navy);cursor:pointer;text-align:left;display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-.collapsible-btn:hover{background:#f5f3ee}
-.collapsible-btn .arrow{transition:transform .2s}
-.collapsible-btn.open .arrow{transform:rotate(180deg)}
-.collapsible-content{display:none}.collapsible-content.open{display:block}
+  /* HERO */
+  .hero { background: linear-gradient(135deg, var(--navy) 0%, #2a2a4e 100%); color: #fff; padding: 48px 20px 40px; text-align: center; }
+  .hero h1 { font-size: clamp(20px, 4vw, 28px); font-weight: 700; letter-spacing: .02em; margin-bottom: 12px; }
+  .hero h1 span { color: var(--gold-light); }
+  .hero p { font-size: 14px; color: #aab8cc; max-width: 560px; margin: 0 auto; }
+  .step-badges { display: flex; justify-content: center; gap: 8px; margin-top: 24px; flex-wrap: wrap; }
+  .step-badge { background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2); border-radius: 20px; padding: 6px 16px; font-size: 12px; color: #ccd; }
 
-.event-row{display:flex;align-items:center;gap:8px;margin-bottom:9px;flex-wrap:wrap}
-.event-row label{font-size:13px;white-space:nowrap;min-width:80px}
-.event-row input{width:70px;flex:none}
-.remove-btn{background:#e53935;color:#fff;border:none;border-radius:4px;padding:4px 8px;font-size:12px;cursor:pointer}
-.add-btn{background:none;border:1px solid var(--border);border-radius:6px;padding:6px 13px;font-size:13px;color:var(--navy);cursor:pointer;margin-top:3px}
-.add-btn:hover{background:#f5f3ee}
+  /* LAYOUT */
+  .container { max-width: 760px; margin: 0 auto; padding: 32px 16px 80px; }
 
-.btn-calc{display:block;width:100%;background:var(--navy);color:#fff;border:none;border-radius:8px;padding:14px;font-size:16px;font-weight:700;cursor:pointer;letter-spacing:.05em;transition:background .2s;margin-top:6px}
-.btn-calc:hover{background:var(--navy2)}
-.btn-back{background:#555}.btn-back:hover{background:#444}
+  /* CARD */
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 28px 24px; margin-bottom: 20px; }
+  .card-title { font-size: 13px; font-weight: 700; color: var(--gold); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
 
-/* RESULT */
-#result{display:none}
-.result-hero{background:var(--navy);color:#fff;border-radius:10px;padding:22px 18px;margin-bottom:14px;text-align:center}
-.result-hero .label{font-size:11px;color:#aab8cc;letter-spacing:2px;margin-bottom:5px}
-.result-hero .saving{font-size:36px;font-weight:700;color:var(--gold-light)}
-.result-hero .saving-sub{font-size:13px;color:#ccd;margin-top:3px}
+  /* FORM */
+  .field { margin-bottom: 18px; }
+  .field label { display: block; font-size: 13px; font-weight: 700; color: var(--navy); margin-bottom: 6px; }
+  .field label .sub { font-size: 11px; font-weight: 400; color: var(--muted); margin-left: 6px; }
+  .field input[type=number], .field select { width: 100%; padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 6px; font-size: 15px; color: var(--text); background: #fff; transition: border-color .2s; -webkit-appearance: none; appearance: none; }
+  .field input[type=number]:focus, .field select:focus { outline: none; border-color: var(--gold); }
+  .field .unit { font-size: 13px; color: var(--muted); margin-left: 6px; }
+  .input-row { display: flex; align-items: center; gap: 8px; }
+  .input-row input { flex: 1; }
+  .radio-group { display: flex; gap: 10px; flex-wrap: wrap; }
+  .radio-group label { display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 400; color: var(--text); cursor: pointer; padding: 8px 14px; border: 1.5px solid var(--border); border-radius: 6px; transition: all .15s; }
+  .radio-group input[type=radio] { accent-color: var(--navy); }
+  .radio-group label:has(input:checked) { border-color: var(--navy); background: #f0f0f8; font-weight: 700; }
+  .checkbox-group { display: flex; flex-direction: column; gap: 8px; }
+  .checkbox-group label { display: flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer; }
+  .checkbox-group input[type=checkbox] { accent-color: var(--navy); width: 16px; height: 16px; }
 
-.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:14px}
-@media(max-width:480px){.result-grid{grid-template-columns:1fr}}
-.rbox{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px}
-.rbox .rb-label{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:1px;margin-bottom:3px}
-.rbox .rb-value{font-size:19px;font-weight:700;color:var(--navy)}
-.rbox .rb-sub{font-size:11px;color:var(--muted);margin-top:2px;line-height:1.4}
-.rbox.green{border-color:#a5d6a7;background:var(--green-bg)}.rbox.green .rb-value{color:var(--green)}
-.rbox.blue{border-color:#90caf9;background:var(--blue-bg)}.rbox.blue .rb-value{color:var(--blue)}
-.rbox.amber{border-color:#ffcc80;background:var(--amber-bg)}.rbox.amber .rb-value{color:var(--amber)}
+  /* BTN */
+  .btn-calc { display: block; width: 100%; background: var(--navy); color: #fff; border: none; border-radius: 8px; padding: 16px; font-size: 16px; font-weight: 700; cursor: pointer; letter-spacing: .05em; transition: background .2s; margin-top: 8px; }
+  .btn-calc:hover { background: #2a2a4e; }
 
-.alloc-bar-wrap{background:#eee;border-radius:6px;overflow:hidden;height:28px;display:flex;margin-bottom:7px}
-.alloc-seg{height:100%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;overflow:hidden;white-space:nowrap;min-width:0;transition:width .5s}
-.seg-ideco{background:var(--navy)}.seg-nisa{background:var(--green)}.seg-ins{background:var(--amber)}.seg-emerg{background:var(--blue)}.seg-free{background:#aaa}
-.alloc-legend{display:flex;flex-wrap:wrap;gap:9px}
-.legend-item{display:flex;align-items:center;gap:5px;font-size:12px}
-.legend-dot{width:11px;height:11px;border-radius:3px;flex-shrink:0}
+  /* RESULT */
+  #result { display: none; }
+  .result-hero { background: var(--navy); color: #fff; border-radius: 10px; padding: 28px 24px; margin-bottom: 20px; text-align: center; }
+  .result-hero .label { font-size: 12px; color: #aab8cc; letter-spacing: 2px; margin-bottom: 8px; }
+  .result-hero .saving { font-size: 42px; font-weight: 700; color: var(--gold-light); }
+  .result-hero .saving-sub { font-size: 14px; color: #ccd; margin-top: 4px; }
 
-.chart-wrap{position:relative;height:320px;margin-bottom:14px}
+  .result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+  @media (max-width: 520px) { .result-grid { grid-template-columns: 1fr; } }
+  .result-box { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 20px; }
+  .result-box .rb-label { font-size: 11px; font-weight: 700; color: var(--muted); letter-spacing: 1px; margin-bottom: 6px; }
+  .result-box .rb-value { font-size: 22px; font-weight: 700; color: var(--navy); }
+  .result-box .rb-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .result-box.green { border-color: #a5d6a7; background: var(--green-light); }
+  .result-box.green .rb-value { color: var(--green); }
+  .result-box.blue { border-color: #90caf9; background: var(--blue-light); }
+  .result-box.blue .rb-value { color: var(--blue); }
+  .result-box.amber { border-color: #ffcc80; background: var(--amber-light); }
+  .result-box.amber .rb-value { color: var(--amber); }
 
-.ms-table{width:100%;border-collapse:collapse;font-size:12px}
-.ms-table th{background:var(--navy);color:#fff;padding:7px 9px;text-align:right;font-weight:600}
-.ms-table th:first-child{text-align:left}
-.ms-table td{padding:6px 9px;border-bottom:1px solid var(--border);text-align:right}
-.ms-table td:first-child{text-align:left;font-weight:600}
-.ms-table tr.retire-row td{background:#fff8e6;font-weight:700}
+  /* ALLOCATION BAR */
+  .alloc-section { margin-bottom: 20px; }
+  .alloc-title { font-size: 13px; font-weight: 700; color: var(--navy); margin-bottom: 12px; }
+  .alloc-bar-wrap { background: #eee; border-radius: 6px; overflow: hidden; height: 32px; display: flex; margin-bottom: 8px; }
+  .alloc-seg { height: 100%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #fff; transition: width .5s; min-width: 0; overflow: hidden; white-space: nowrap; }
+  .seg-ideco { background: #1a1a2e; }
+  .seg-nisa  { background: #2e7d32; }
+  .seg-ins   { background: #e65100; }
+  .seg-emerg { background: #1565c0; }
+  .seg-free  { background: #aaa; }
+  .alloc-legend { display: flex; flex-wrap: wrap; gap: 12px; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; }
+  .legend-dot { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
 
-.tax-table{width:100%;border-collapse:collapse;font-size:13px}
-.tax-table th{background:var(--navy);color:#fff;padding:7px 10px;text-align:left;font-weight:600}
-.tax-table td{padding:7px 10px;border-bottom:1px solid var(--border)}
-.tax-table td:last-child{text-align:right}
-.tax-table tr:nth-child(even) td{background:#f9f7f2}
-.tax-table tr.hi td{font-weight:700;color:var(--navy);background:#fff8e6!important}
+  /* ADVICE */
+  .advice-list { list-style: none; }
+  .advice-list li { padding: 10px 14px 10px 40px; position: relative; border-radius: 6px; margin-bottom: 8px; font-size: 14px; }
+  .advice-list li::before { content: attr(data-icon); position: absolute; left: 12px; top: 10px; }
+  .advice-list li.ok { background: var(--green-light); color: #1b5e20; }
+  .advice-list li.warn { background: var(--amber-light); color: #bf360c; }
+  .advice-list li.info { background: var(--blue-light); color: #0d47a1; }
 
-.advice-list{list-style:none}
-.advice-list li{padding:9px 14px 9px 36px;position:relative;border-radius:6px;margin-bottom:7px;font-size:13px;line-height:1.6}
-.advice-list li::before{content:attr(data-icon);position:absolute;left:9px;top:9px}
-.advice-list li.ok{background:var(--green-bg);color:#1b5e20}
-.advice-list li.warn{background:var(--amber-bg);color:#bf360c}
-.advice-list li.info{background:var(--blue-bg);color:#0d47a1}
+  /* TAX TABLE */
+  .tax-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .tax-table th { background: var(--navy); color: #fff; padding: 8px 12px; text-align: left; font-weight: 600; }
+  .tax-table td { padding: 8px 12px; border-bottom: 1px solid var(--border); }
+  .tax-table tr:last-child td { border-bottom: none; }
+  .tax-table tr:nth-child(even) td { background: #f8f6f0; }
+  .highlight-row td { font-weight: 700; color: var(--navy); background: #fff8e6 !important; }
 
-.cta-section{background:var(--navy);border-radius:10px;padding:26px 18px;text-align:center;margin-top:14px}
-.cta-section h3{color:#fff;font-size:16px;margin-bottom:7px}
-.cta-section p{color:#aab8cc;font-size:13px;margin-bottom:18px}
-.cta-btn{display:inline-block;background:#e8a020;color:#fff;font-size:14px;font-weight:700;padding:12px 26px;border-radius:6px;text-decoration:none;margin:4px;transition:background .2s}
-.cta-btn:hover{background:#cc8c10;color:#fff}
-.cta-btn.sec{background:transparent;border:2px solid #e8a020;color:#e8a020}
-.cta-btn.sec:hover{background:rgba(232,160,32,.1)}
-.cta-note{font-size:11px;color:#778899;margin-top:12px}
+  /* CTA */
+  .cta-section { background: var(--navy); border-radius: 10px; padding: 32px 24px; text-align: center; margin-top: 20px; }
+  .cta-section h3 { color: #fff; font-size: 18px; margin-bottom: 8px; }
+  .cta-section p { color: #aab8cc; font-size: 13px; margin-bottom: 24px; }
+  .cta-btn { display: inline-block; background: #e8a020; color: #fff; font-size: 15px; font-weight: 700; padding: 14px 32px; border-radius: 6px; text-decoration: none; margin: 6px; transition: background .2s; }
+  .cta-btn:hover { background: #cc8c10; }
+  .cta-btn.secondary { background: transparent; border: 2px solid #e8a020; color: #e8a020; }
+  .cta-btn.secondary:hover { background: rgba(232,160,32,.1); }
+  .cta-note { font-size: 11px; color: #778899; margin-top: 16px; }
 
-.note{font-size:12px;color:var(--muted);background:#f5f5f5;border-left:3px solid var(--border);padding:9px 12px;border-radius:0 6px 6px 0;margin-top:10px;line-height:1.6}
-.wp-link{display:block;text-align:center;margin-top:16px}
-.wp-link a{color:var(--gold-light);font-size:13px;text-decoration:none;border-bottom:1px solid var(--gold)}
+  /* MISC */
+  .divider { height: 1px; background: var(--border); margin: 20px 0; }
+  .note { font-size: 12px; color: var(--muted); background: #f5f5f5; border-left: 3px solid var(--border); padding: 10px 14px; border-radius: 0 6px 6px 0; margin-top: 16px; }
+
+  /* PROJECTION CHART */
+  .chart-wrap { width: 100%; overflow-x: auto; }
+  .chart-svg { display: block; width: 100%; }
+  .chart-legend { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 12px; font-size: 12px; color: var(--muted); }
+  .chart-legend span { display: flex; align-items: center; gap: 5px; }
+  .chart-legend b { display: inline-block; width: 20px; height: 4px; border-radius: 2px; }
+  .scenario-pills { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+  .scenario-pill { padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; cursor: pointer; border: 1.5px solid; background: transparent; }
+  .scenario-pill.active { color: #fff !important; }
+  .chart-summary { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-top: 14px; }
+  @media(max-width:480px) { .chart-summary { grid-template-columns: 1fr 1fr; } }
+  .cs-box { text-align: center; padding: 10px 8px; border-radius: 8px; border: 1px solid var(--border); }
+  .cs-label { font-size: 10px; color: var(--muted); margin-bottom: 3px; font-weight: 700; letter-spacing: 1px; }
+  .cs-value { font-size: 18px; font-weight: 700; color: var(--navy); }
+
+  /* TOOLTIP */
+  .tooltip-wrap { position: relative; display: inline-block; }
+  .tooltip-icon { display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; border-radius: 50%; background: #ccc; color: #fff; font-size: 10px; cursor: help; margin-left: 4px; font-weight: 700; }
+  .tooltip-icon:hover::after { content: attr(data-tip); position: absolute; bottom: 22px; left: 50%; transform: translateX(-50%); background: #333; color: #fff; font-size: 11px; padding: 6px 10px; border-radius: 4px; white-space: nowrap; z-index: 100; line-height: 1.5; font-weight: 400; }
+
+  /* PROGRESS */
+  .progress-track { display: flex; gap: 0; margin-bottom: 32px; }
+  .progress-step { flex: 1; text-align: center; font-size: 11px; color: var(--muted); padding-bottom: 8px; border-bottom: 2px solid var(--border); }
+  .progress-step.active { color: var(--navy); font-weight: 700; border-bottom-color: var(--navy); }
+
+  /* INCOME RANGE INDICATOR */
+  .income-indicator { font-size: 13px; color: var(--muted); text-align: right; margin-top: 4px; }
 </style>
 </head>
 <body>
+
 <header class="site-header">
-  <a href="https://moneykyoshitsu.com/">← マネー教室 トップへ戻る</a>
+  <a href="https://moneykyoshitsu.com">← マネー教室 トップへ戻る</a>
 </header>
+
 <div class="hero">
-  <h1><span>資産形成シミュレーター</span><br>iDeCo・NISA 最適配分＆将来資産診断</h1>
-  <p>月の手取りと支出を入力するだけで、投資可能額と将来資産を自動計算します。</p>
+  <h1>資産形成シミュレーター<br><span>iDeCo・NISA・保険 最適配分診断</span></h1>
+  <p>年収・年齢・家族構成を入力するだけで、あなたに最適な掛け金と年間節税額を自動計算します。</p>
+  <div class="step-badges">
+    <div class="step-badge">① 情報を入力</div>
+    <div class="step-badge">② 節税額を確認</div>
+    <div class="step-badge">③ 口座を開設</div>
+  </div>
 </div>
 
 <div class="container">
 
-<!-- ===== ACCESS BLOCKED (デフォルト表示) ===== -->
-<div id="blockedMsg" style="text-align:center;padding:48px 16px;">
-  <div style="background:#1a1a2e;border-radius:12px;padding:36px 24px;max-width:480px;margin:0 auto;">
-    <p style="font-size:10px;font-weight:700;color:#c0a060;letter-spacing:3px;margin:0 0 14px;">MONEY CLASSROOM</p>
-    <p style="font-size:20px;font-weight:700;color:#ffffff;margin:0 0 12px;line-height:1.4;">サイト経由でご利用ください</p>
-    <p style="font-size:13px;color:#aab8cc;line-height:1.8;margin:0 0 26px;">
-      このシミュレーターは<br>
-      <strong style="color:#e8d5a0;">マネー教室 サイト</strong>の<br>
-      「シミュレーターを開く」ボタンからのみ<br>ご利用いただけます。</p>
-    <a href="https://moneykyoshitsu.com/" style="display:inline-block;background:#e8a020;color:#fff;font-size:14px;font-weight:700;padding:13px 30px;border-radius:7px;text-decoration:none;letter-spacing:0.04em;">
-      マネー教室 へ →</a>
-    <p style="font-size:11px;color:#445566;margin:16px 0 0;">無料・登録不要で利用できます</p>
+  <!-- FORM -->
+  <form id="simForm">
+
+    <div class="card">
+      <div class="card-title">基本情報</div>
+
+      <div class="field">
+        <label>年齢</label>
+        <div class="input-row">
+          <input type="number" id="age" min="20" max="74" value="30" placeholder="例: 35">
+          <span class="unit">歳</span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>雇用形態</label>
+        <div class="radio-group">
+          <label><input type="radio" name="emptype" value="employee" checked> 会社員<br><small>（企業年金なし）</small></label>
+          <label><input type="radio" name="emptype" value="employee_pension"> 会社員<br><small>（企業年金あり）</small></label>
+          <label><input type="radio" name="emptype" value="civil"> 公務員</label>
+          <label><input type="radio" name="emptype" value="self"> 自営業</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">家族構成</div>
+
+      <div class="field">
+        <label>配偶者の有無</label>
+        <div class="radio-group">
+          <label><input type="radio" name="spouse" value="none" checked> いない</label>
+          <label><input type="radio" name="spouse" value="dependent"> 専業主婦（夫）</label>
+          <label><input type="radio" name="spouse" value="working"> 共働き</label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>子供の人数 <span class="sub">（扶養に入れている人数）</span></label>
+        <div class="radio-group">
+          <label><input type="radio" name="children" value="0" checked> 0人</label>
+          <label><input type="radio" name="children" value="1"> 1人</label>
+          <label><input type="radio" name="children" value="2"> 2人</label>
+          <label><input type="radio" name="children" value="3"> 3人以上</label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>住まい</label>
+        <div class="radio-group">
+          <label><input type="radio" name="home" value="rent" checked> 賃貸</label>
+          <label><input type="radio" name="home" value="own_loan"> 持ち家（ローンあり）</label>
+          <label><input type="radio" name="home" value="own_noloan"> 持ち家（ローンなし）</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">収入・支出</div>
+
+      <div class="field">
+        <label>年収（税込） <span class="tooltip-wrap"><span class="tooltip-icon" data-tip="給与・賞与の合計。所得税は自動計算します">?</span></span></label>
+        <div class="input-row">
+          <input type="number" id="income" min="0" max="10000" value="500" step="10" placeholder="例: 500">
+          <span class="unit">万円</span>
+        </div>
+        <div class="income-indicator" id="incomeHint"></div>
+      </div>
+
+      <div class="field">
+        <label>昨年の社会保険料 <span class="sub">（年金・健保・雇用保険の合計）</span>
+          <span class="tooltip-wrap"><span class="tooltip-icon" data-tip="源泉徴収票の「社会保険料等の金額」欄を確認してください">?</span></span>
+        </label>
+        <div class="input-row">
+          <input type="number" id="socialInsurance" min="0" max="300" value="70" step="1" placeholder="例: 70">
+          <span class="unit">万円</span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>月々の自由に使える金額 <span class="sub">（手取りから生活費を引いた残り）</span></label>
+        <div class="input-row">
+          <input type="number" id="freeMonth" min="0" max="100" value="5" step="1" placeholder="例: 5">
+          <span class="unit">万円</span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>現在の貯蓄額</label>
+        <div class="input-row">
+          <input type="number" id="savings" min="0" max="5000" value="100" step="10" placeholder="例: 100">
+          <span class="unit">万円</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">その他</div>
+      <div class="field">
+        <label>iDeCoに興味はありますか？</label>
+        <div class="radio-group">
+          <label><input type="radio" name="idecoAge" value="yes" checked> はい、老後資金を積み立てたい</label>
+          <label><input type="radio" name="idecoAge" value="no"> 流動性を重視したい</label>
+        </div>
+      </div>
+    </div>
+
+    <button type="button" class="btn-calc" onclick="calculate()">診断する →</button>
+  </form>
+
+  <!-- RESULT -->
+  <div id="result">
+
+    <div class="result-hero" id="resultHero">
+      <div class="label">年間 推定節税額</div>
+      <div class="saving" id="rTaxSaving">—</div>
+      <div class="saving-sub" id="rTaxSavingSub"></div>
+    </div>
+
+    <div class="result-grid">
+      <div class="result-box green">
+        <div class="rb-label">iDeCo 推奨月額</div>
+        <div class="rb-value" id="rIdeco">—</div>
+        <div class="rb-sub" id="rIdecoSub"></div>
+      </div>
+      <div class="result-box blue">
+        <div class="rb-label">NISA 推奨月額</div>
+        <div class="rb-value" id="rNisa">—</div>
+        <div class="rb-sub" id="rNisaSub"></div>
+      </div>
+      <div class="result-box amber">
+        <div class="rb-label">生命保険 必要性</div>
+        <div class="rb-value" id="rIns">—</div>
+        <div class="rb-sub" id="rInsSub"></div>
+      </div>
+      <div class="result-box">
+        <div class="rb-label">緊急資金 目標額</div>
+        <div class="rb-value" id="rEmerg">—</div>
+        <div class="rb-sub" id="rEmergSub"></div>
+      </div>
+    </div>
+
+    <!-- ALLOCATION BAR -->
+    <div class="card alloc-section">
+      <div class="card-title">月々の推奨配分</div>
+      <div class="alloc-title" id="allocTitle"></div>
+      <div class="alloc-bar-wrap" id="allocBar"></div>
+      <div class="alloc-legend" id="allocLegend"></div>
+    </div>
+
+    <!-- TAX BREAKDOWN -->
+    <div class="card">
+      <div class="card-title">税金シミュレーション</div>
+      <table class="tax-table" id="taxTable">
+        <thead><tr><th>項目</th><th>金額</th></tr></thead>
+        <tbody id="taxBody"></tbody>
+      </table>
+      <div class="note">※ 所得税に復興特別所得税2.1%を加算。住民税は均等割を含みません。iDeCo拠出は小規模企業共済等掛金控除として適用。</div>
+    </div>
+
+    <!-- PROJECTION CHART -->
+    <div class="card" id="projCard" style="display:none">
+      <div class="card-title">将来資産シミュレーション（モンテカルロ法）</div>
+      <p style="font-size:13px;color:#666;margin-bottom:14px;line-height:1.7;">
+        推奨投資額で積み立て続けた場合、<strong>過去の市場データ（500通りの乱数シナリオ）</strong>をもとに将来資産の分布を表示します。実際の市場は毎年上下を繰り返すため、直線的には増えません。
+      </p>
+      <div class="scenario-pills">
+        <button class="scenario-pill active" id="pill-world" onclick="switchScenario('world')" style="color:#1565c0;border-color:#1565c0;">オルカン（全世界株）</button>
+        <button class="scenario-pill" id="pill-sp500" onclick="switchScenario('sp500')" style="color:#2e7d32;border-color:#2e7d32;">S&amp;P500</button>
+        <button class="scenario-pill" id="pill-bond" onclick="switchScenario('bond')" style="color:#e65100;border-color:#e65100;">保守的（株60:債券40）</button>
+      </div>
+      <div class="chart-wrap">
+        <svg class="chart-svg" id="projChart" viewBox="0 0 640 300" preserveAspectRatio="xMidYMid meet"></svg>
+      </div>
+      <div class="chart-legend">
+        <span><b style="background:#1565c0;opacity:.2;height:12px;border-radius:3px;"></b>90%の確率で収まる範囲</span>
+        <span><b style="background:#1565c0;opacity:.5;height:12px;border-radius:3px;"></b>50%の確率で収まる範囲</span>
+        <span><b style="background:#1565c0;"></b>中央値（50th percentile）</span>
+        <span><b style="background:#aaa;"></b>元本（積立額のみ）</span>
+      </div>
+      <div class="chart-summary" id="chartSummary"></div>
+      <div class="note" style="margin-top:12px;">
+        ※ 過去データ（MSCI World: 年率リターン約6%・標準偏差約15%）に基づくシミュレーション。将来の運用成果を保証するものではありません。インフレ・税金は考慮していません。
+      </div>
+    </div>
+
+    <!-- ADVICE -->
+    <div class="card">
+      <div class="card-title">あなたへのアドバイス</div>
+      <ul class="advice-list" id="adviceList"></ul>
+    </div>
+
+    <!-- CTA -->
+    <div class="cta-section" id="ctaSection">
+      <h3 id="ctaTitle">まずは口座開設から（無料・5分）</h3>
+      <p id="ctaDesc"></p>
+      <div id="ctaBtns"></div>
+      <p class="cta-note">※ 口座開設は無料。開設後すぐに投資を始める必要はありません。どんな商品があるか確認するだけでも第一歩です。<br>※ 上記リンクはアフィリエイトリンクを含む場合があります。</p>
+    </div>
+
+    <button type="button" class="btn-calc" style="margin-top:32px;background:#555;" onclick="scrollToForm()">入力に戻って再計算する</button>
   </div>
+
 </div>
-
-<!-- ===== MAIN CONTENT (WordPress経由のみ表示) ===== -->
-<div id="mainContent" style="display:none">
-
-<!-- ======================== FORM ======================== -->
-<form id="simForm">
-
-<div class="card">
-  <div class="card-title">基本情報</div>
-  <div class="field">
-    <label>年齢</label>
-    <div class="input-row"><input type="number" id="age" min="20" max="74" value="30"><span class="unit">歳</span></div>
-  </div>
-  <div class="field">
-    <label>雇用形態</label>
-    <div class="radio-group">
-      <label><input type="radio" name="emp" value="employee" checked>会社員（企業年金なし）</label>
-      <label><input type="radio" name="emp" value="employee_pension">会社員（企業年金あり）</label>
-      <label><input type="radio" name="emp" value="civil">公務員</label>
-      <label><input type="radio" name="emp" value="self">自営業</label>
-    </div>
-  </div>
-  <div class="field">
-    <label>配偶者</label>
-    <div class="radio-group">
-      <label><input type="radio" name="spouse" value="none" checked>いない</label>
-      <label><input type="radio" name="spouse" value="dependent">専業主婦（夫）</label>
-      <label><input type="radio" name="spouse" value="working">共働き</label>
-    </div>
-  </div>
-  <div class="field">
-    <label>扶養中の子供</label>
-    <div class="radio-group">
-      <label><input type="radio" name="kids" value="0" checked>0人</label>
-      <label><input type="radio" name="kids" value="1">1人</label>
-      <label><input type="radio" name="kids" value="2">2人</label>
-      <label><input type="radio" name="kids" value="3">3人以上</label>
-    </div>
-  </div>
-  <div class="field">
-    <label>住まい</label>
-    <div class="radio-group">
-      <label><input type="radio" name="home" value="rent" checked>賃貸</label>
-      <label><input type="radio" name="home" value="own_loan">持ち家（ローンあり）</label>
-      <label><input type="radio" name="home" value="own_noloan">持ち家（ローンなし）</label>
-    </div>
-  </div>
-</div>
-
-<!-- 収支 -->
-<div class="card">
-  <div class="card-title">月々の収支</div>
-  <div class="field">
-    <label>月の手取り額 <span class="sub">（税・社保控除後の実収入）</span></label>
-    <div class="input-row"><input type="number" id="takehome" min="5" max="300" value="25" step="0.5" oninput="updateBudget()"><span class="unit">万円</span></div>
-  </div>
-  <div class="field">
-    <label>月々の固定支出</label>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px">
-      <div>
-        <div style="font-size:12px;color:var(--muted);margin-bottom:3px">家賃 / 住宅ローン返済</div>
-        <div class="input-row"><input type="number" id="exp_rent" min="0" max="50" value="8" step="0.5" oninput="updateBudget()"><span class="unit">万円</span></div>
-      </div>
-      <div>
-        <div style="font-size:12px;color:var(--muted);margin-bottom:3px">食費（外食含む）</div>
-        <div class="input-row"><input type="number" id="exp_food" min="0" max="30" value="5" step="0.5" oninput="updateBudget()"><span class="unit">万円</span></div>
-      </div>
-      <div>
-        <div style="font-size:12px;color:var(--muted);margin-bottom:3px">光熱費・通信・サブスク</div>
-        <div class="input-row"><input type="number" id="exp_util" min="0" max="20" value="2" step="0.5" oninput="updateBudget()"><span class="unit">万円</span></div>
-      </div>
-      <div>
-        <div style="font-size:12px;color:var(--muted);margin-bottom:3px">現在の保険料</div>
-        <div class="input-row"><input type="number" id="exp_ins" min="0" max="10" value="0.5" step="0.1" oninput="updateBudget()"><span class="unit">万円</span></div>
-      </div>
-      <div>
-        <div style="font-size:12px;color:var(--muted);margin-bottom:3px">その他固定費</div>
-        <div class="input-row"><input type="number" id="exp_other" min="0" max="30" value="2" step="0.5" oninput="updateBudget()"><span class="unit">万円</span></div>
-      </div>
-      <div>
-        <div style="font-size:12px;color:var(--muted);margin-bottom:3px">毎月の貯金（現金）</div>
-        <div class="input-row"><input type="number" id="exp_save" min="0" max="50" value="2" step="0.5" oninput="updateBudget()"><span class="unit">万円</span></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- 収支サマリー（リアルタイム） -->
-  <div class="budget-summary" id="budgetSummary">
-    <div class="bs-row"><span class="bs-label">月の手取り</span><span class="bs-val" id="bs_takehome">25万円</span></div>
-    <div class="bs-row"><span class="bs-label">固定支出合計</span><span class="bs-val" id="bs_total_exp">▲ 19.5万円</span></div>
-    <div class="bs-row total"><span class="bs-label">月々の余裕資金</span><span class="bs-val" id="bs_free">5.5万円</span></div>
-    <div class="bs-row invest"><span class="bs-label">うち投資に回せる最大額</span><span class="bs-val" id="bs_invest">5.5万円</span></div>
-  </div>
-</div>
-
-<div class="card">
-  <div class="card-title">資産・投資設定</div>
-  <div class="field">
-    <label>現在の金融資産 <span class="sub">（貯蓄・投資口座合計）</span></label>
-    <div class="input-row"><input type="number" id="savings" min="0" max="5000" value="100" step="10"><span class="unit">万円</span></div>
-  </div>
-  <div class="field">
-    <label>目標リタイア年齢</label>
-    <div class="input-row"><input type="number" id="retireAge" min="50" max="75" value="65"><span class="unit">歳</span></div>
-  </div>
-  <div class="field">
-    <label>iDeCoの利用意向</label>
-    <div class="radio-group">
-      <label><input type="radio" name="idecoWant" value="yes" checked>フル活用したい</label>
-      <label><input type="radio" name="idecoWant" value="partial">一部利用</label>
-      <label><input type="radio" name="idecoWant" value="no">NISAのみ</label>
-    </div>
-  </div>
-  <div class="field">
-    <label>iDeCo 月額上限（カスタム） <span class="sub">（会社の年金制度で上限が2.3万円未満の場合）</span></label>
-    <div class="input-row"><input type="number" id="idecoCustomLimit" min="0.1" max="6.8" value="" step="0.1" placeholder="例: 1.2（空白=雇用形態の上限）"><span class="unit">万円</span></div>
-    <div class="hint">企業年金（確定給付・確定拠出）が一部ある場合は実際の上限額を入力してください。</div>
-  </div>
-  <div class="field">
-    <label>比較する指数</label>
-    <div class="check-group">
-      <label><input type="checkbox" name="idx" value="orcan" checked>オルカン（+7%）</label>
-      <label><input type="checkbox" name="idx" value="sp" checked>S&P500（+9.5%）</label>
-      <label><input type="checkbox" name="idx" value="nasdaq" checked>Nasdaq-100（+13%）</label>
-    </div>
-    <div class="note" style="margin-top:8px">悲観ライン（年率0%・3%・5%）は常時破線で表示します。</div>
-  </div>
-</div>
-
-<!-- 年収（任意） -->
-<button type="button" class="collapsible-btn" onclick="toggleSection('incomeSection',this)">
-  年収入力（任意・節税額の計算に使用）<span class="arrow">▼</span>
-</button>
-<div class="collapsible-content card" id="incomeSection">
-  <div class="card-title">節税計算用（任意）</div>
-  <div class="field">
-    <label>年収（税込） <span class="sub">（入力しない場合は手取りから推計）</span></label>
-    <div class="input-row"><input type="number" id="income" min="0" max="10000" value="" step="10" placeholder="例: 500"><span class="unit">万円</span></div>
-    <div class="hint" id="incomeHint"></div>
-  </div>
-  <div class="field">
-    <label>年間社会保険料 <span class="sub">（源泉徴収票の「社会保険料等の金額」）</span></label>
-    <div class="input-row"><input type="number" id="si" min="0" max="300" value="" step="1" placeholder="例: 70"><span class="unit">万円</span></div>
-  </div>
-</div>
-
-<!-- 詳細設定 -->
-<button type="button" class="collapsible-btn" onclick="toggleSection('advSection',this)">
-  詳細設定（任意）<span class="arrow">▼</span>
-</button>
-<div class="collapsible-content card" id="advSection">
-  <div class="card-title">詳細設定</div>
-  <div class="field">
-    <label>年収の年間上昇率</label>
-    <div class="radio-group" id="salaryGrowthRadios">
-      <label><input type="radio" name="salaryGrowth" value="0" checked>変化なし</label>
-      <label><input type="radio" name="salaryGrowth" value="1">+1%/年</label>
-      <label><input type="radio" name="salaryGrowth" value="3">+3%/年</label>
-      <label><input type="radio" name="salaryGrowth" value="5">+5%/年</label>
-      <label><input type="radio" name="salaryGrowth" value="8">+8%/年</label>
-      <label><input type="radio" name="salaryGrowth" value="10">+10%/年</label>
-      <label><input type="radio" name="salaryGrowth" value="custom">自由入力</label>
-    </div>
-    <div id="salaryGrowthCustomWrap" style="display:none;margin-top:8px">
-      <div class="input-row">
-        <input type="number" id="salaryGrowthCustom" min="0" max="100" value="7" step="0.5" style="max-width:100px">
-        <span class="unit">%/年</span>
-        <span style="font-size:12px;color:var(--muted)">（転職・昇進・副業など）</span>
-      </div>
-    </div>
-  </div>
-  <div class="field">
-    <label>余裕資金の投資上限 <span class="sub">（月額）</span></label>
-    <div class="input-row"><input type="number" id="freeCap" min="0" max="100" value="0" step="1"><span class="unit">万円（0=上限なし）</span></div>
-  </div>
-  <div class="field">
-    <label>インフレ率（実質リターン換算）</label>
-    <div class="radio-group">
-      <label><input type="radio" name="inflation" value="0" checked>考慮しない</label>
-      <label><input type="radio" name="inflation" value="2">2%（現インフレ目標）</label>
-      <label><input type="radio" name="inflation" value="3">3%（保守的想定）</label>
-    </div>
-  </div>
-</div>
-
-<!-- ライフイベント -->
-<button type="button" class="collapsible-btn" onclick="toggleSection('lifeSection',this)">
-  ライフイベント（任意）<span class="arrow">▼</span>
-</button>
-<div class="collapsible-content card" id="lifeSection">
-  <div class="card-title">ライフイベント</div>
-  <div class="field">
-    <label>子供が生まれる予定 <span class="sub">（自分が何歳のとき）</span></label>
-    <div id="childEvents"></div>
-    <button type="button" class="add-btn" onclick="addChild()">＋ 子供を追加</button>
-    <div class="note" style="margin-top:8px">0〜5歳：月+3万、6〜17歳：月+1.5万、18〜21歳：月+5万の支出増として計算。</div>
-  </div>
-  <div class="field">
-    <label>住宅購入予定</label>
-    <div class="radio-group" style="margin-bottom:9px">
-      <label><input type="radio" name="homePlan" value="none" checked>予定なし</label>
-      <label><input type="radio" name="homePlan" value="plan">購入予定あり</label>
-    </div>
-    <div id="homePlanDetail" style="display:none">
-      <div class="event-row">
-        <label>購入年齢</label>
-        <input type="number" id="homePlanAge" min="25" max="65" value="35"><span class="unit">歳</span>
-      </div>
-      <div class="event-row">
-        <label>頭金</label>
-        <input type="number" id="homeDownpay" min="0" max="3000" value="300" step="50"><span class="unit">万円</span>
-      </div>
-    </div>
-  </div>
-  <div class="field">
-    <label>その他支出イベント</label>
-    <div id="otherEvents"></div>
-    <button type="button" class="add-btn" onclick="addOtherEvent()">＋ イベントを追加</button>
-  </div>
-</div>
-
-<button type="button" class="btn-calc" onclick="calculate()">診断する →</button>
-</form>
-
-<!-- ======================== RESULT ======================== -->
-<div id="result">
-  <div class="result-hero">
-    <div class="label">iDeCo 年間 推定節税額</div>
-    <div class="saving" id="rSaving">—</div>
-    <div class="saving-sub" id="rSavingSub"></div>
-  </div>
-  <div class="result-grid">
-    <div class="rbox green"><div class="rb-label">iDeCo 推奨月額</div><div class="rb-value" id="rIdeco">—</div><div class="rb-sub" id="rIdecoSub"></div></div>
-    <div class="rbox blue"><div class="rb-label">NISA 推奨月額</div><div class="rb-value" id="rNisa">—</div><div class="rb-sub" id="rNisaSub"></div></div>
-    <div class="rbox amber"><div class="rb-label">生命保険 必要性</div><div class="rb-value" id="rIns">—</div><div class="rb-sub" id="rInsSub"></div></div>
-    <div class="rbox"><div class="rb-label">緊急資金 目標額</div><div class="rb-value" id="rEmerg">—</div><div class="rb-sub" id="rEmergSub"></div></div>
-  </div>
-  <div class="card">
-    <div class="card-title">月々の推奨配分</div>
-    <div style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:9px" id="allocTitle"></div>
-    <div class="alloc-bar-wrap" id="allocBar"></div>
-    <div class="alloc-legend" id="allocLegend"></div>
-  </div>
-  <div class="card">
-    <div class="card-title">将来資産シミュレーション</div>
-    <div id="indexBadges" style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:10px"></div>
-    <div class="note" id="chartNote" style="margin-bottom:12px"></div>
-    <div class="chart-wrap"><canvas id="assetChart"></canvas></div>
-    <div class="note">※ iDeCo節税額をNISAに再投資した場合を含む。過去の実績は将来を保証しません。</div>
-  </div>
-  <div class="card">
-    <div class="card-title">年齢別 資産シミュレーション</div>
-    <div style="overflow-x:auto"><table class="ms-table"><thead id="msHead"></thead><tbody id="msBody"></tbody></table></div>
-    <div class="note" id="msNote" style="margin-top:8px"></div>
-  </div>
-  <div class="card">
-    <div class="card-title">税金シミュレーション</div>
-    <table class="tax-table"><thead><tr><th>項目</th><th>金額</th></tr></thead><tbody id="taxBody"></tbody></table>
-    <div class="note">※ 所得税に復興特別所得税2.1%を加算。年収未入力時は手取りから推計。</div>
-  </div>
-  <div class="card">
-    <div class="card-title">あなたへのアドバイス</div>
-    <ul class="advice-list" id="adviceList"></ul>
-  </div>
-  <div class="cta-section">
-    <h3>まずは口座開設から（無料・5分）</h3>
-    <p id="ctaDesc"></p>
-    <div id="ctaBtns"></div>
-    <p class="cta-note">※ 口座開設は無料。すぐに投資を始める必要はありません。<br>※ 上記リンクはアフィリエイトリンクを含む場合があります。</p>
-  </div>
-  <div class="wp-link"><a href="https://moneykyoshitsu.com/">← マネー教室 の記事に戻る</a></div>
-  <button type="button" class="btn-calc btn-back" style="margin-top:16px" onclick="backToForm()">入力に戻って再計算する</button>
-</div>
-</div><!-- /mainContent -->
-</div><!-- /container -->
 
 <script>
-// =====================================================
-// ACCESS GUARD — WordPress経由のみコンテンツを表示
-// =====================================================
-(function(){
-  const p       = new URLSearchParams(window.location.search);
-  const hasToken = p.has('ref') || p.has('takehome');
-  const fromWP   = document.referrer.includes('moneykyoshitsu.com') || document.referrer.includes('moneykyoshitsu.wordpress.com');
-  if (hasToken || fromWP) {
-    document.getElementById('blockedMsg').style.display   = 'none';
-    document.getElementById('mainContent').style.display  = 'block';
-  }
-})();
+// ============================================================
+// CORE CALCULATIONS
+// ============================================================
 
-// =====================================================
-// STATE
-// =====================================================
-let childCount = 0, otherCount = 0, chartInst = null;
-
-// =====================================================
-// BUDGET LIVE UPDATE
-// =====================================================
-function getNum(id, def=0){ return parseFloat(document.getElementById(id)?.value)||def; }
-
-function updateBudget(){
-  const th   = getNum('takehome', 25);
-  const rent = getNum('exp_rent');
-  const food = getNum('exp_food');
-  const util = getNum('exp_util');
-  const ins  = getNum('exp_ins');
-  const other= getNum('exp_other');
-  const save = getNum('exp_save');
-  const totalExp = rent + food + util + ins + other + save;
-  const free = Math.max(0, th - totalExp);
-
-  document.getElementById('bs_takehome').textContent  = `${th}万円`;
-  document.getElementById('bs_total_exp').textContent = `▲ ${Math.round(totalExp*10)/10}万円`;
-  document.getElementById('bs_free').textContent      = `${Math.round(free*10)/10}万円`;
-  document.getElementById('bs_invest').textContent    = `${Math.round(free*10)/10}万円`;
-}
-updateBudget();
-
-// =====================================================
-// UI HELPERS
-// =====================================================
-function toggleSection(id, btn){
-  document.getElementById(id).classList.toggle('open');
-  btn.classList.toggle('open');
-}
-document.querySelectorAll('input[name=homePlan]').forEach(r=>
-  r.addEventListener('change',()=>{
-    document.getElementById('homePlanDetail').style.display=
-      document.querySelector('input[name=homePlan]:checked').value==='plan'?'block':'none';
-  })
-);
-document.querySelectorAll('input[name=salaryGrowth]').forEach(r=>
-  r.addEventListener('change',()=>{
-    document.getElementById('salaryGrowthCustomWrap').style.display=
-      document.querySelector('input[name=salaryGrowth]:checked').value==='custom'?'block':'none';
-  })
-);
-function addChild(){
-  childCount++;
-  const d=document.createElement('div'); d.className='event-row'; d.id=`child-${childCount}`;
-  d.innerHTML=`<label>子供 ${childCount}</label><span>自分が</span>
-    <input type="number" id="childAge-${childCount}" min="20" max="60" value="${27+childCount}" style="width:65px">
-    <span class="unit">歳のとき</span>
-    <button type="button" class="remove-btn" onclick="removeEl('child-${childCount}')">削除</button>`;
-  document.getElementById('childEvents').appendChild(d);
-}
-function addOtherEvent(){
-  otherCount++;
-  const d=document.createElement('div'); d.className='event-row'; d.id=`other-${otherCount}`;
-  d.innerHTML=`<input type="number" id="otherAge-${otherCount}" min="20" max="80" value="35" style="width:65px">
-    <span class="unit">歳</span>
-    <input type="number" id="otherAmt-${otherCount}" min="0" max="5000" value="100" style="width:80px">
-    <span class="unit">万円支出</span>
-    <button type="button" class="remove-btn" onclick="removeEl('other-${otherCount}')">削除</button>`;
-  document.getElementById('otherEvents').appendChild(d);
-}
-function removeEl(id){ document.getElementById(id)?.remove(); }
-
-document.getElementById('income').addEventListener('input', function(){
-  const v=parseFloat(this.value)||0;
-  document.getElementById('incomeHint').textContent = !v?'':
-    v<=200?'低〜中所得（税率5〜10%）':v<=400?'中所得（税率10〜20%）':
-    v<=600?'中〜高所得（税率20%）':v<=900?'高所得（税率23%）':'超高所得（税率33%〜）';
-});
-
-// =====================================================
-// TAX FUNCTIONS
-// =====================================================
-function empDeduction(inc){
-  if(inc<=162.5)return 55; if(inc<=180)return inc*.4-10;
-  if(inc<=360)return inc*.3+8; if(inc<=660)return inc*.2+44;
-  if(inc<=850)return inc*.1+110; return 195;
-}
-function incomeTax(t){
-  const b=[[195,.05,0],[330,.10,9.75],[695,.20,42.75],[900,.23,63.6],[1800,.33,153.6],[4000,.40,279.6],[Infinity,.45,479.6]];
-  for(const[l,r,d]of b)if(t<=l)return Math.max(0,t*r-d); return 0;
-}
-function calcTax(income, si, spDed, kidDed, idecoYear){
-  const ed=empDeduction(income), ni=Math.max(0,income-ed);
-  const taxable=Math.max(0,ni-48-spDed-kidDed-si-idecoYear);
-  const it=incomeTax(taxable)*1.021, rt=taxable*.10;
-  return{ed,ni,taxable,it,rt,total:it+rt};
-}
-function idecoLimitMonth(emp){
-  return emp==='employee'?2.3:emp==='employee_pension'?1.2:emp==='civil'?1.2:6.8;
-}
-// 手取りから年収を推計（簡易）
-function estimateIncomeFromTakehome(th){
-  // 手取り≒(年収×0.8程度)÷12 の逆算
-  return th * 12 / 0.78;
+// 給与所得控除 (2024)
+function employmentDeduction(income) {
+  if (income <= 162.5) return 55;
+  if (income <= 180)   return income * 0.4 - 10;
+  if (income <= 360)   return income * 0.3 + 8;
+  if (income <= 660)   return income * 0.2 + 44;
+  if (income <= 850)   return income * 0.1 + 110;
+  return 195;
 }
 
-// =====================================================
-// SIMULATION
-// =====================================================
-const INDEX_RETURNS={orcan:.07,sp:.095,nasdaq:.13};
-const INDEX_LABELS ={orcan:'オルカン',sp:'S&P500',nasdaq:'Nasdaq-100'};
-const INDEX_COLORS ={orcan:'#4caf50',sp:'#2196f3',nasdaq:'#9c27b0'};
-const REF_SCENARIOS=[
-  {key:'r0',label:'年率0%（現金同等）',rate:0,color:'#9e9e9e',dash:[6,4]},
-  {key:'r3',label:'年率3%（保守的）',  rate:.03,color:'#ff7043',dash:[6,4]},
-  {key:'r5',label:'年率5%（穏やか）',  rate:.05,color:'#ffa000',dash:[6,4]},
-];
-
-function simulateAtRate(params, annualRate){
-  const{age,retireAge,idecoMonth,nisaMonth,taxSavingYear,
-        freeMonth,freeCap,salaryGrowthRate,existingSavings,
-        lifeEvents,homeEvent,otherEvents}=params;
-  const years=retireAge-age;
-  let iDeco=0, nisa=existingSavings||0;
-  const results=[];
-  for(let y=0;y<=years;y++){
-    const curAge=age+y;
-    const gf=Math.pow(1+salaryGrowthRate/100,y);
-    let curFree=freeMonth*gf;
-    if(freeCap>0)curFree=Math.min(curFree,freeCap);
-    let extra=0;
-    for(const ev of lifeEvents){
-      const ca=curAge-ev.parentAge;
-      if(ca>=0&&ca<6)extra+=3; if(ca>=6&&ca<18)extra+=1.5; if(ca>=18&&ca<22)extra+=5;
-    }
-    for(const oe of otherEvents){if(curAge===oe.age)extra+=oe.amount/12;}
-    const eff=Math.max(0,curFree-extra);
-    const idecoCont=curAge<65?Math.min(idecoMonth,eff):0;
-    const taxReinvest=taxSavingYear/12;
-    const nisaCont=Math.min(30,Math.max(0,eff-idecoCont)+taxReinvest,nisaMonth+taxReinvest);
-    const homeImp=(homeEvent&&curAge===homeEvent.age)?homeEvent.downpay:0;
-    iDeco=(iDeco+idecoCont*12)*(1+annualRate);
-    nisa=Math.max(0,(nisa+nisaCont*12-homeImp)*(1+annualRate));
-    results.push({age:curAge,ideco:Math.round(iDeco),nisa:Math.round(nisa),total:Math.round(iDeco+nisa)});
-  }
-  return results;
-}
-
-function simulate(params){
-  const inf=parseFloat(params.inflation)/100;
-  const all={};
-  for(const sc of REF_SCENARIOS) all[sc.key]=simulateAtRate(params,Math.max(0,sc.rate-inf));
-  for(const idx of params.selectedIdx) all[idx]=simulateAtRate(params,Math.max(0,INDEX_RETURNS[idx]-inf));
-  return all;
-}
-
-// =====================================================
-// CALCULATE
-// =====================================================
-function calculate(){
-  const age      =parseInt(document.getElementById('age').value)||30;
-  const takehome =parseFloat(document.getElementById('takehome').value)||0;
-  const expRent  =getNum('exp_rent'); const expFood =getNum('exp_food');
-  const expUtil  =getNum('exp_util'); const expIns  =getNum('exp_ins');
-  const expOther =getNum('exp_other');const expSave =getNum('exp_save');
-  const savings  =getNum('savings');
-  const retireAge=parseInt(document.getElementById('retireAge').value)||65;
-  const freeCap  =getNum('freeCap');
-  const emp      =document.querySelector('input[name=emp]:checked').value;
-  const spouse   =document.querySelector('input[name=spouse]:checked').value;
-  const kids     =parseInt(document.querySelector('input[name=kids]:checked').value);
-  const home     =document.querySelector('input[name=home]:checked').value;
-  const idecoWant=document.querySelector('input[name=idecoWant]:checked').value;
-  const sgVal    =document.querySelector('input[name=salaryGrowth]:checked').value;
-  const salaryGrowth=sgVal==='custom'?parseFloat(document.getElementById('salaryGrowthCustom').value)||0:parseFloat(sgVal);
-  const inflation=document.querySelector('input[name=inflation]:checked').value;
-  const selectedIdx=Array.from(document.querySelectorAll('input[name=idx]:checked')).map(c=>c.value);
-  if(selectedIdx.length===0){alert('指数を1つ以上選択してください');return;}
-
-  // 月々の余裕資金
-  const totalExp = expRent+expFood+expUtil+expIns+expOther+expSave;
-  const freeMonth= Math.max(0, takehome - totalExp);
-
-  // 年収：入力あればそのまま、なければ推計
-  const incomeInput=parseFloat(document.getElementById('income').value)||0;
-  const income = incomeInput > 0 ? incomeInput : estimateIncomeFromTakehome(takehome);
-  const siInput=parseFloat(document.getElementById('si').value)||0;
-  const si = siInput > 0 ? siInput : Math.round(income * 0.14);  // 社保概算14%
-
-  // Life events
-  const lifeEvents=[];
-  for(let i=1;i<=childCount;i++){const el=document.getElementById(`childAge-${i}`);if(el)lifeEvents.push({parentAge:parseInt(el.value)});}
-  const homePlan=document.querySelector('input[name=homePlan]:checked').value;
-  const homeEvent=homePlan==='plan'?{age:parseInt(document.getElementById('homePlanAge').value),downpay:getNum('homeDownpay')}:null;
-  const otherEvents=[];
-  for(let i=1;i<=otherCount;i++){const a=document.getElementById(`otherAge-${i}`),m=document.getElementById(`otherAmt-${i}`);if(a&&m)otherEvents.push({age:parseInt(a.value),amount:parseFloat(m.value)});}
-
-  // Tax
-  const spDed=spouse==='dependent'?38:0, kidDed=kids*38;
-  const idecoDefaultLimitMth=idecoLimitMonth(emp);
-  const idecoCustomVal=parseFloat(document.getElementById('idecoCustomLimit').value)||0;
-  const idecoLimitMth=idecoCustomVal>0?Math.min(idecoCustomVal,idecoDefaultLimitMth):idecoDefaultLimitMth;
-  const idecoMonthUse=idecoWant==='no'?0:idecoWant==='partial'?idecoLimitMth/2:idecoLimitMth;
-  const idecoOk=age<65&&idecoWant!=='no';
-  const tax0=calcTax(income,si,spDed,kidDed,0);
-  const tax1=calcTax(income,si,spDed,kidDed,idecoOk?idecoMonthUse*12:0);
-  const idecoSaving=Math.max(0,tax0.total-tax1.total);
-
-  // NISA: 余裕資金からiDeCoを引いた残り + 節税再投資
-  const freeAfterIdeco=Math.max(0,freeMonth-idecoMonthUse);
-  const nisaMonth=Math.min(30, freeAfterIdeco + idecoSaving/12);
-
-  // Simulate
-  const simParams={
-    age,retireAge,idecoMonth:idecoMonthUse,nisaMonth,
-    taxSavingYear:idecoSaving,freeMonth,freeCap,
-    salaryGrowthRate:salaryGrowth,inflation,
-    selectedIdx,lifeEvents,homeEvent,otherEvents,
-    existingSavings:savings,
-  };
-  const simResults=simulate(simParams);
-
-  const needIns=kids===0&&spouse!=='dependent'?'low':home==='own_loan'?'medium':'high';
-  const monthCost=Math.max(6, takehome - totalExp*0.3);  // 支出の一部は変動費
-  const emergTarget=monthCost*6;
-  const emergOk=savings>=emergTarget;
-
-  // RENDER
-  document.getElementById('simForm').style.display='none';
-  document.getElementById('result').style.display='block';
-  window.scrollTo({top:0,behavior:'smooth'});
-
-  document.getElementById('rSaving').textContent=idecoOk
-    ?`年 ${Math.round(idecoSaving*10)/10}万円（月${Math.round(idecoSaving*10000/12)}円）`:'—（iDeCo非利用）';
-  document.getElementById('rSavingSub').textContent=idecoOk
-    ?`iDeCo月${Math.round(idecoMonthUse*10)/10}万円フル活用時。節税分はNISAに再投資します。`:'';
-
-  document.getElementById('rIdeco').textContent=idecoOk?`月 ${Math.round(idecoMonthUse*10)/10}万円`:'非利用';
-  document.getElementById('rIdecoSub').textContent=idecoOk?`年上限 ${Math.round(idecoMonthUse*12*10)/10}万円`:'';
-  document.getElementById('rNisa').textContent=`月 ${Math.round(nisaMonth*10)/10}万円`;
-  document.getElementById('rNisaSub').textContent=`節税再投資（月${Math.round(idecoSaving/12*10)/10}万円）含む`;
-
-  const insL=needIns==='high'?['必要','収入保障型保険を検討']:needIns==='medium'?['最低限','団信で代替可能']:['不要〜最小限','掛け捨て医療保険のみ'];
-  document.getElementById('rIns').textContent=insL[0];
-  document.getElementById('rInsSub').textContent=insL[1];
-  document.getElementById('rEmerg').textContent=`${Math.round(emergTarget)}万円`;
-  document.getElementById('rEmergSub').textContent=emergOk?`貯蓄で確保済み`:`${Math.round(emergTarget-savings)}万円不足`;
-
-  // Alloc bar
-  const tot=freeMonth;
-  const iP=tot>0?Math.round(idecoMonthUse/tot*100):0;
-  const nP=tot>0?Math.round(Math.min(freeAfterIdeco,tot-idecoMonthUse)/tot*100):0;
-  const insP=needIns==='high'?Math.min(10,100-iP-nP):0;
-  const eP=!emergOk?Math.min(15,100-iP-nP-insP):0;
-  const fP=Math.max(0,100-iP-nP-insP-eP);
-  document.getElementById('allocTitle').textContent=`月 ${freeMonth}万円の推奨配分（余裕資金）`;
-  document.getElementById('allocBar').innerHTML=[
-    iP>0?`<div class="alloc-seg seg-ideco" style="width:${iP}%">iDeCo</div>`:'',
-    nP>0?`<div class="alloc-seg seg-nisa"  style="width:${nP}%">NISA</div>`:'',
-    insP>0?`<div class="alloc-seg seg-ins" style="width:${insP}%">保険</div>`:'',
-    eP>0?`<div class="alloc-seg seg-emerg" style="width:${eP}%">緊急資金</div>`:'',
-    fP>0?`<div class="alloc-seg seg-free"  style="width:${fP}%">その他</div>`:'',
-  ].join('');
-  document.getElementById('allocLegend').innerHTML=[
-    iP>0?`<div class="legend-item"><div class="legend-dot" style="background:var(--navy)"></div>iDeCo ${Math.round(idecoMonthUse*10)/10}万円</div>`:'',
-    nP>0?`<div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>NISA ${Math.round(Math.min(freeAfterIdeco,tot-idecoMonthUse)*10)/10}万円</div>`:'',
-    insP>0?`<div class="legend-item"><div class="legend-dot" style="background:var(--amber)"></div>保険料 ${Math.round(tot*insP/100*10)/10}万円</div>`:'',
-    eP>0?`<div class="legend-item"><div class="legend-dot" style="background:var(--blue)"></div>緊急資金 ${Math.round(tot*eP/100*10)/10}万円</div>`:'',
-    fP>0?`<div class="legend-item"><div class="legend-dot" style="background:#aaa"></div>その他 ${Math.round(tot*fP/100*10)/10}万円</div>`:'',
-  ].join('');
-
-  // Badges & chart note
-  const inf=parseFloat(inflation);
-  document.getElementById('indexBadges').innerHTML=[
-    ...selectedIdx.map(idx=>`<span style="background:${INDEX_COLORS[idx]}22;color:${INDEX_COLORS[idx]};border:1px solid ${INDEX_COLORS[idx]}88;border-radius:20px;padding:3px 11px;font-size:12px;font-weight:700">${INDEX_LABELS[idx]} +${(INDEX_RETURNS[idx]*100).toFixed(1)}%/年</span>`),
-    ...REF_SCENARIOS.map(sc=>`<span style="background:#f5f5f5;color:#666;border:1px solid #ccc;border-radius:20px;padding:3px 11px;font-size:12px">${sc.label}</span>`),
-  ].join('');
-  document.getElementById('chartNote').textContent=
-    `実線＝過去平均リターン、破線＝悲観参照ライン（0%・3%・5%）。${inf>0?`インフレ${inf}%調整後（実質値）。`:'名目値。'}`+
-    `現在の金融資産 ${savings}万円を初期値に設定。iDeCo節税額（年${Math.round(idecoSaving*10)/10}万円）をNISAに再投資。`;
-
-  // Chart
-  const chartLabels=simResults[REF_SCENARIOS[0].key].map(r=>`${r.age}歳`);
-  const nPts=chartLabels.length;
-  const datasets=[
-    ...REF_SCENARIOS.map(sc=>({label:sc.label,data:simResults[sc.key].map(r=>r.total),borderColor:sc.color,backgroundColor:'transparent',borderDash:sc.dash,borderWidth:1.5,pointRadius:0,tension:.3,fill:false})),
-    ...selectedIdx.map(idx=>({label:`${INDEX_LABELS[idx]}（+${(INDEX_RETURNS[idx]*100).toFixed(1)}%）`,data:simResults[idx].map(r=>r.total),borderColor:INDEX_COLORS[idx],backgroundColor:INDEX_COLORS[idx]+'18',fill:true,borderWidth:2.5,pointRadius:nPts>25?0:3,tension:.3})),
+// 所得税額 (超過累進)
+function calcIncomeTax(taxableIncome) {
+  const brackets = [
+    [195,   0.05,   0],
+    [330,   0.10,   9.75],
+    [695,   0.20,  42.75],
+    [900,   0.23,  63.6],
+    [1800,  0.33, 153.6],
+    [4000,  0.40, 279.6],
+    [Infinity, 0.45, 479.6],
   ];
-  if(chartInst)chartInst.destroy();
-  chartInst=new Chart(document.getElementById('assetChart'),{
-    type:'line',data:{labels:chartLabels,datasets},
-    options:{responsive:true,maintainAspectRatio:false,
-      interaction:{mode:'index',intersect:false},
-      plugins:{legend:{position:'top',labels:{font:{size:11},padding:9,boxWidth:22}},
-        tooltip:{callbacks:{label:ctx=>{const v=ctx.parsed.y;return`${ctx.dataset.label}: ${v>=10000?(v/10000).toFixed(2)+'億円':v.toLocaleString()+'万円'}`;}}}},
-      scales:{
-        x:{ticks:{font:{size:10},maxTicksLimit:10},grid:{display:false}},
-        y:{ticks:{font:{size:10},callback:v=>v>=10000?`${(v/10000).toFixed(1)}億`:`${v.toLocaleString()}万`},grid:{color:'#eee'}},
+  for (const [limit, rate, deduct] of brackets) {
+    if (taxableIncome <= limit) {
+      return Math.max(0, taxableIncome * rate - deduct);
+    }
+  }
+  return 0;
+}
+
+// iDeCo上限 (月額)
+function idecoLimit(emptype) {
+  if (emptype === 'employee')         return 2.3;  // 23,000円
+  if (emptype === 'employee_pension') return 1.2;  // 12,000円
+  if (emptype === 'civil')            return 1.2;  // 12,000円
+  if (emptype === 'self')             return 6.8;  // 68,000円
+  return 2.3;
+}
+
+function fmt(n) {
+  return Math.round(n).toLocaleString('ja-JP');
+}
+
+function fmtMan(n) {
+  if (n >= 100) return Math.round(n) + '万円';
+  return Math.round(n * 10) / 10 + '万円';
+}
+
+// ============================================================
+// MAIN CALCULATE
+// ============================================================
+function calculate() {
+  const age    = parseInt(document.getElementById('age').value) || 30;
+  const income = parseFloat(document.getElementById('income').value) || 0;
+  const si     = parseFloat(document.getElementById('socialInsurance').value) || 0;
+  const free   = parseFloat(document.getElementById('freeMonth').value) || 0;
+  const svgs   = parseFloat(document.getElementById('savings').value) || 0;
+  const emp    = document.querySelector('input[name=emptype]:checked').value;
+  const spouse = document.querySelector('input[name=spouse]:checked').value;
+  const kids   = parseInt(document.querySelector('input[name=children]:checked').value);
+  const home   = document.querySelector('input[name=home]:checked').value;
+  const wantsIdeco = document.querySelector('input[name=idecoAge]:checked').value === 'yes';
+
+  // --- 税計算（iDeCoなし） ---
+  const empDed  = employmentDeduction(income);
+  const baseDed = 48;                          // 基礎控除
+  const spDed   = spouse === 'dependent' ? 38 : 0;
+  const kidDed  = kids * 38;
+  const netIncome = Math.max(0, income - empDed);
+  const taxable0  = Math.max(0, netIncome - baseDed - spDed - kidDed - si);
+  const incomeTax0 = calcIncomeTax(taxable0) * 1.021;  // 復興特別所得税
+  const residentTax0 = taxable0 * 0.10;
+  const totalTax0 = incomeTax0 + residentTax0;
+
+  // --- iDeCo ---
+  const idecoMonthMax = idecoLimit(emp);     // 万円/月
+  const idecoYearMax  = idecoMonthMax * 12;
+
+  // 年齢チェック (60歳以降はiDeCoを推奨しない)
+  const idecoOk = age < 60 && wantsIdeco;
+  const idecoMonthRec = idecoOk ? Math.min(idecoMonthMax, Math.max(0, free * 0.5)) : 0;
+  const idecoMonthUse = idecoOk ? idecoMonthMax : 0; // フル活用推奨額で節税計算
+  const idecoYearUse  = idecoMonthUse * 12;
+
+  // iDeCo適用後の節税
+  const taxable1    = Math.max(0, taxable0 - idecoYearUse);
+  const incomeTax1  = calcIncomeTax(taxable1) * 1.021;
+  const residentTax1 = taxable1 * 0.10;
+  const totalTax1   = incomeTax1 + residentTax1;
+  const idecoSaving = Math.max(0, totalTax0 - totalTax1);
+
+  // 実効税率
+  const marginalRate = taxable0 <= 195 ? 0.05
+    : taxable0 <= 330  ? 0.10
+    : taxable0 <= 695  ? 0.20
+    : taxable0 <= 900  ? 0.23
+    : taxable0 <= 1800 ? 0.33
+    : 0.40;
+  const effRate = (marginalRate * 1.021 + 0.10);
+
+  // --- NISA ---
+  const nisaMonthMax = 30; // 360万/年 = 30万/月 (上限)
+  const freeAfterIdeco = Math.max(0, free - idecoMonthRec);
+  const nisaMonthRec = Math.min(nisaMonthMax, Math.max(0, freeAfterIdeco * 0.8));
+
+  // --- 保険 ---
+  const needLifeIns = (() => {
+    if (kids === 0 && spouse !== 'dependent') return 'low';
+    if (home === 'own_loan') return 'medium'; // 団信あり
+    return 'high';
+  })();
+
+  // --- 緊急資金 ---
+  const monthlyLivingCost = Math.max(10, income / 12 * 0.65 - (si / 12) - free);
+  const emergTarget = monthlyLivingCost * 6;
+  const emergOk = svgs >= emergTarget;
+
+  // ============================================================
+  // DISPLAY
+  // ============================================================
+  document.getElementById('result').style.display = 'block';
+  document.getElementById('simForm').style.display = 'none';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  // 節税額ヒーロー
+  document.getElementById('rTaxSaving').textContent = idecoOk
+    ? `年 ${fmt(idecoSaving * 10000)}円`
+    : '—';
+  document.getElementById('rTaxSavingSub').textContent = idecoOk
+    ? `iDeCoをフル活用（月${idecoMonthMax}万円）した場合の推定節税額`
+    : '（iDeCo不使用）';
+
+  // iDeCo
+  document.getElementById('rIdeco').textContent = idecoOk
+    ? `月 ${idecoMonthMax}万円`
+    : age >= 60 ? '対象外（60歳以上）' : '非推奨';
+  document.getElementById('rIdecoSub').textContent = idecoOk
+    ? `年間上限 ${idecoYearMax}万円｜節税効果 約${Math.round(effRate * 100)}%`
+    : '';
+
+  // NISA
+  document.getElementById('rNisa').textContent = `月 ${Math.round(nisaMonthRec * 10) / 10}万円`;
+  document.getElementById('rNisaSub').textContent = '非課税複利で長期運用（上限 月30万円）';
+
+  // 保険
+  const insLabels = {
+    high:   ['必要', '保障見直しを推奨します'],
+    medium: ['最低限でOK', '団信で死亡保障は代替可能'],
+    low:    ['不要または最小限', '掛け捨ての医療保険のみ検討'],
+  };
+  document.getElementById('rIns').textContent    = insLabels[needLifeIns][0];
+  document.getElementById('rInsSub').textContent = insLabels[needLifeIns][1];
+
+  // 緊急資金
+  document.getElementById('rEmerg').textContent = fmtMan(emergTarget);
+  document.getElementById('rEmergSub').textContent = emergOk
+    ? `現在の貯蓄で確保済み`
+    : `現在の貯蓄 ${svgs}万円（${fmtMan(emergTarget - svgs)}不足）`;
+
+  // --- 配分バー ---
+  const totalFree = free;
+  const idecoP = totalFree > 0 ? Math.min(100, (idecoMonthRec / totalFree) * 100) : 0;
+  const nisaP  = totalFree > 0 ? Math.min(100 - idecoP, (nisaMonthRec / totalFree) * 100) : 0;
+  const insP   = needLifeIns === 'high' ? Math.min(10, 100 - idecoP - nisaP) : 0;
+  const emergP = !emergOk ? Math.min(15, 100 - idecoP - nisaP - insP) : 0;
+  const freeP  = Math.max(0, 100 - idecoP - nisaP - insP - emergP);
+
+  document.getElementById('allocTitle').textContent = `月 ${free}万円の内訳（推奨配分）`;
+  document.getElementById('allocBar').innerHTML = `
+    ${idecoP > 0 ? `<div class="alloc-seg seg-ideco" style="width:${idecoP}%">iDeCo</div>` : ''}
+    ${nisaP > 0  ? `<div class="alloc-seg seg-nisa"  style="width:${nisaP}%">NISA</div>` : ''}
+    ${insP > 0   ? `<div class="alloc-seg seg-ins"   style="width:${insP}%">保険</div>` : ''}
+    ${emergP > 0 ? `<div class="alloc-seg seg-emerg" style="width:${emergP}%">緊急資金</div>` : ''}
+    ${freeP > 0  ? `<div class="alloc-seg seg-free"  style="width:${freeP}%">その他</div>` : ''}
+  `;
+  document.getElementById('allocLegend').innerHTML = [
+    idecoP > 0 ? `<div class="legend-item"><div class="legend-dot" style="background:#1a1a2e"></div>iDeCo ${Math.round(idecoMonthRec * 10) / 10}万円</div>` : '',
+    nisaP > 0  ? `<div class="legend-item"><div class="legend-dot" style="background:#2e7d32"></div>NISA ${Math.round(nisaMonthRec * 10) / 10}万円</div>` : '',
+    insP > 0   ? `<div class="legend-item"><div class="legend-dot" style="background:#e65100"></div>保険料 ${Math.round(free * insP / 100 * 10) / 10}万円</div>` : '',
+    emergP > 0 ? `<div class="legend-item"><div class="legend-dot" style="background:#1565c0"></div>緊急資金積立 ${Math.round(free * emergP / 100 * 10) / 10}万円</div>` : '',
+    freeP > 0  ? `<div class="legend-item"><div class="legend-dot" style="background:#aaa"></div>その他・余裕資金 ${Math.round(free * freeP / 100 * 10) / 10}万円</div>` : '',
+  ].join('');
+
+  // --- 税テーブル ---
+  const rows = [
+    ['年収（税込）', `${income}万円`, false],
+    ['給与所得控除', `▲ ${Math.round(empDed * 10) / 10}万円`, false],
+    ['給与所得（純額）', `${Math.round(netIncome)}万円`, false],
+    ['─ 基礎控除', '▲ 48万円', false],
+    spouse === 'dependent' ? ['─ 配偶者控除', '▲ 38万円', false] : null,
+    kids > 0 ? ['─ 扶養控除', `▲ ${kids * 38}万円`, false] : null,
+    ['─ 社会保険料控除', `▲ ${si}万円`, false],
+    idecoOk ? ['─ iDeCo（小規模企業共済等掛金控除）', `▲ ${idecoYearUse}万円`, true] : null,
+    ['課税所得（iDeCo適用後）', `${Math.round(taxable1)}万円`, true],
+    ['所得税（復興税含む）', `${Math.round(incomeTax1 * 10) / 10}万円`, false],
+    ['住民税（概算）', `${Math.round(residentTax1 * 10) / 10}万円`, false],
+    ['税負担合計', `${Math.round(totalTax1 * 10) / 10}万円`, false],
+    idecoOk ? ['iDeCo未使用時の税負担', `${Math.round(totalTax0 * 10) / 10}万円`, false] : null,
+    idecoOk ? ['節税額（年間）', `${Math.round(idecoSaving * 10) / 10}万円`, true] : null,
+  ].filter(Boolean);
+
+  document.getElementById('taxBody').innerHTML = rows.map(([label, val, hi]) =>
+    `<tr class="${hi ? 'highlight-row' : ''}"><td>${label}</td><td style="text-align:right">${val}</td></tr>`
+  ).join('');
+
+  // --- アドバイス ---
+  const advices = [];
+
+  if (idecoOk) {
+    advices.push({ type: 'ok', icon: '✅',
+      text: `iDeCoをフル活用すると、年間 <strong>${Math.round(idecoSaving * 10) / 10}万円</strong>（月${Math.round(idecoSaving * 10000 / 12)}円）の節税になります。20年間継続すると節税額の合計は約 <strong>${Math.round(idecoSaving * 20 * 10) / 10}万円</strong> になります。` });
+  }
+  if (!idecoOk && age >= 60) {
+    advices.push({ type: 'info', icon: 'ℹ️',
+      text: '60歳以降はiDeCoへの新規拠出ができません。NISAを中心に資産形成を継続しましょう。' });
+  }
+  if (!emergOk) {
+    advices.push({ type: 'warn', icon: '⚠️',
+      text: `緊急資金（生活費の約6ヶ月分 = ${fmtMan(emergTarget)}）がまだ不足しています。まず貯蓄を優先し、緊急資金が確保できてからiDeCo・NISAを始めることを推奨します。` });
+  } else {
+    advices.push({ type: 'ok', icon: '✅',
+      text: `緊急資金（${fmtMan(emergTarget)}）は確保済みです。今すぐiDeCo・NISAを始められる状態です。` });
+  }
+  if (home === 'own_loan') {
+    advices.push({ type: 'ok', icon: '✅',
+      text: '住宅ローンを契約すると「団体信用生命保険（団信）」が付帯されます。死亡・高度障害時にローン残高がゼロになるため、高額な生命保険は不要なケースが多いです。掛け捨て医療保険（月3,000円前後）のみで十分かもしれません。' });
+  }
+  if (needLifeIns === 'high') {
+    advices.push({ type: 'warn', icon: '⚠️',
+      text: `配偶者・子供がいる場合、万一の際の収入保障が必要です。掛け捨て生命保険（収入保障型）は月 2,000〜4,000円程度で高い保障が得られます。貯蓄型保険・終身保険は割高なことが多いため、保険はあくまで「保険料を最小化＋投資に回す」が原則です。` });
+  }
+  if (emp === 'self') {
+    advices.push({ type: 'info', icon: 'ℹ️',
+      text: `自営業の方はiDeCoの上限が月 <strong>6.8万円（年 81.6万円）</strong>と非常に高く、節税効果が最大です。国民年金の付加保険料（月400円）との併用も検討してください。` });
+  }
+  advices.push({ type: 'info', icon: '📋',
+    text: `新NISAは <strong>非課税保有限度額 1,800万円</strong>（うち成長投資枠 1,200万円）。iDeCoと異なり60歳前でも引き出し可能です。余裕資金はiDeCoでまず節税し、残りをNISAに回す順序が一般的に有利です。` });
+
+  document.getElementById('adviceList').innerHTML = advices.map(a =>
+    `<li class="${a.type}" data-icon="${a.icon}">${a.text}</li>`
+  ).join('');
+
+  // --- CTA ---
+  let ctaDesc = '';
+  let ctaBtns = '';
+
+  if (idecoOk && emp !== 'self') {
+    ctaDesc = `年間 ${Math.round(idecoSaving * 10) / 10}万円の節税を今すぐ始められます。まずは口座開設（無料）を。`;
+    ctaBtns = `
+      <a href="https://moneykyoshitsu.com/ideco-myth-debunked/" class="cta-btn" target="_blank">SBI証券でiDeCo口座を開設する</a>
+      <a href="https://moneykyoshitsu.com/new-nisa-explained/" class="cta-btn secondary" target="_blank">NISAについて詳しく読む</a>
+    `;
+  } else if (emp === 'self') {
+    ctaDesc = '自営業の方のiDeCo節税効果は特に大きいです。';
+    ctaBtns = `
+      <a href="https://moneykyoshitsu.com/ideco-myth-debunked/" class="cta-btn" target="_blank">iDeCo詳細記事を読む</a>
+      <a href="https://moneykyoshitsu.com/new-nisa-explained/" class="cta-btn secondary" target="_blank">NISAについて読む</a>
+    `;
+  } else {
+    ctaDesc = 'NISAを使って非課税で資産を増やしましょう。';
+    ctaBtns = `
+      <a href="https://moneykyoshitsu.com/new-nisa-explained/" class="cta-btn" target="_blank">新NISAを詳しく読む</a>
+    `;
+  }
+  document.getElementById('ctaDesc').textContent = ctaDesc;
+  document.getElementById('ctaBtns').innerHTML = ctaBtns;
+
+  // 将来資産チャートを更新
+  const totalMonthly = idecoMonthRec + nisaMonthRec;   // 万円/月
+  const yearsToRetire = Math.max(5, 65 - age);
+  updateProjectionChart(totalMonthly * 10000, yearsToRetire);  // 円単位に変換
+}
+
+function scrollToForm() {
+  document.getElementById('result').style.display = 'none';
+  document.getElementById('simForm').style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ============================================================
+// モンテカルロ将来資産シミュレーション
+// ============================================================
+const SCENARIOS = {
+  world: { label: 'オルカン（全世界株）', mu: 0.060, sigma: 0.148, color: '#1565c0' },
+  sp500: { label: 'S&P500',              mu: 0.068, sigma: 0.165, color: '#2e7d32' },
+  bond:  { label: '株60:債券40',         mu: 0.042, sigma: 0.090, color: '#e65100' },
+};
+
+let _projData = null;  // キャッシュ
+let _projMonth = 0;
+let _projYears = 0;
+let _currentScenario = 'world';
+
+// Box-Muller 法で標準正規分布の乱数
+function boxMuller() {
+  let u1, u2;
+  do { u1 = Math.random(); } while (u1 === 0);
+  u2 = Math.random();
+  return Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+}
+
+// パーセンタイルを計算
+function percentile(sorted, p) {
+  const i = Math.max(0, Math.min(sorted.length - 1, Math.floor(sorted.length * p)));
+  return sorted[i];
+}
+
+// 年ごとのパーセンタイル計算（モンテカルロ）
+function runMonteCarlo(monthlyYen, years, mu, sigma, numSims = 500) {
+  const mMu    = Math.pow(1 + mu, 1 / 12) - 1;
+  const mSigma = sigma / Math.sqrt(12);
+
+  // yearIdx × simulation の2次元配列
+  const snapshots = Array.from({ length: years + 1 }, () => []);
+
+  for (let s = 0; s < numSims; s++) {
+    let val = 0;
+    snapshots[0].push(0);
+    for (let yr = 1; yr <= years; yr++) {
+      for (let m = 0; m < 12; m++) {
+        const r = mMu + mSigma * boxMuller();
+        val = (val + monthlyYen) * (1 + r);
       }
+      snapshots[yr].push(val);
+    }
+  }
+
+  return snapshots.map((data, yr) => {
+    const sorted = [...data].sort((a, b) => a - b);
+    const simple = monthlyYen * 12 * yr;           // 元本のみ
+    return {
+      yr,
+      p10: percentile(sorted, 0.10),
+      p25: percentile(sorted, 0.25),
+      p50: percentile(sorted, 0.50),
+      p75: percentile(sorted, 0.75),
+      p90: percentile(sorted, 0.90),
+      simple,
+    };
+  });
+}
+
+// SVG チャートを描画
+function drawProjectionChart(data, color) {
+  const svg    = document.getElementById('projChart');
+  const W = 640, H = 300, PAD = { top: 20, right: 20, bottom: 40, left: 70 };
+  const cW = W - PAD.left - PAD.right;
+  const cH = H - PAD.top  - PAD.bottom;
+
+  const years = data.length - 1;
+  const maxVal = data[years].p90;
+  if (maxVal <= 0) { svg.innerHTML = '<text x="320" y="150" text-anchor="middle" fill="#aaa" font-size="14">データなし</text>'; return; }
+
+  const xScale = yr => PAD.left + (yr / years) * cW;
+  const yScale = v  => PAD.top  + cH - (v / maxVal) * cH;
+
+  const pts = (key) => data.map(d => `${xScale(d.yr).toFixed(1)},${yScale(d[key]).toFixed(1)}`).join(' ');
+
+  // 面積（ポリゴン）
+  const areaPath = (k1, k2) => {
+    const top = data.map(d => `${xScale(d.yr).toFixed(1)},${yScale(d[k2]).toFixed(1)}`);
+    const bot = [...data].reverse().map(d => `${xScale(d.yr).toFixed(1)},${yScale(d[k1]).toFixed(1)}`);
+    return `${top.join(' ')} ${bot.join(' ')}`;
+  };
+
+  // 軸ラベル（Y）
+  const yTicks = 5;
+  let yLabels = '';
+  for (let i = 0; i <= yTicks; i++) {
+    const v  = (maxVal / yTicks) * i;
+    const y  = yScale(v);
+    const lbl = v >= 1e8 ? `${(v/1e8).toFixed(1)}億` : v >= 1e4 ? `${Math.round(v/1e4)}万` : `${Math.round(v)}円`;
+    yLabels += `<line x1="${PAD.left}" y1="${y.toFixed(1)}" x2="${W - PAD.right}" y2="${y.toFixed(1)}" stroke="#eee" stroke-width="1"/>`;
+    yLabels += `<text x="${PAD.left - 6}" y="${(y + 4).toFixed(1)}" text-anchor="end" font-size="10" fill="#888">${lbl}</text>`;
+  }
+  // 軸ラベル（X）
+  let xLabels = '';
+  for (let yr = 0; yr <= years; yr += 5) {
+    const x = xScale(yr);
+    xLabels += `<text x="${x.toFixed(1)}" y="${H - 6}" text-anchor="middle" font-size="10" fill="#888">${yr === 0 ? '今' : yr + '年後'}</text>`;
+  }
+
+  // 万円単位にスケールアップ（内部は万円）
+  function fmtYen(v) {
+    if (v >= 1e8) return `${(v / 1e8).toFixed(1)}億円`;
+    if (v >= 1e4) return `${Math.round(v / 1e4)}万円`;
+    return `${Math.round(v)}円`;
+  }
+
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  svg.innerHTML = `
+    <g>
+      ${yLabels}
+      <line x1="${PAD.left}" y1="${PAD.top}" x2="${PAD.left}" y2="${PAD.top + cH}" stroke="#ccc" stroke-width="1.5"/>
+      <line x1="${PAD.left}" y1="${PAD.top + cH}" x2="${W - PAD.right}" y2="${PAD.top + cH}" stroke="#ccc" stroke-width="1.5"/>
+      ${xLabels}
+      <!-- P10-P90 帯 -->
+      <polygon points="${areaPath('p10','p90')}" fill="${color}" opacity="0.12"/>
+      <!-- P25-P75 帯 -->
+      <polygon points="${areaPath('p25','p75')}" fill="${color}" opacity="0.28"/>
+      <!-- 元本ライン -->
+      <polyline points="${pts('simple')}" fill="none" stroke="#aaa" stroke-width="1.5" stroke-dasharray="4,3"/>
+      <!-- 中央値ライン -->
+      <polyline points="${pts('p50')}" fill="none" stroke="${color}" stroke-width="2.5"/>
+    </g>
+  `;
+
+  // サマリーボックス
+  const last = data[years];
+  const summaryEl = document.getElementById('chartSummary');
+  const mkBox = (label, val, bg) =>
+    `<div class="cs-box" style="background:${bg};">
+       <div class="cs-label">${label}</div>
+       <div class="cs-value">${fmtYen(val)}</div>
+     </div>`;
+  summaryEl.innerHTML =
+    mkBox('楽観的シナリオ<br>（上位25%）',  last.p75, '#e8f5e9') +
+    mkBox('中央値<br>（50th percentile）', last.p50, '#e3f2fd') +
+    mkBox('悲観的シナリオ<br>（下位25%）', last.p25, '#fff3e0') +
+    mkBox('元本（積立合計）',               last.simple, '#f5f5f5') +
+    mkBox('最悪シナリオ<br>（下位10%）',    last.p10, '#ffebee') +
+    mkBox('最良シナリオ<br>（上位10%）',    last.p90, '#e8f5e9');
+}
+
+function switchScenario(key) {
+  _currentScenario = key;
+  Object.keys(SCENARIOS).forEach(k => {
+    const pill = document.getElementById(`pill-${k}`);
+    const sc = SCENARIOS[k];
+    if (k === key) {
+      pill.classList.add('active');
+      pill.style.background = sc.color;
+      pill.style.color = '#fff';
+    } else {
+      pill.classList.remove('active');
+      pill.style.background = 'transparent';
+      pill.style.color = sc.color;
     }
   });
-
-  // Milestone table
-  const allKeys=[...REF_SCENARIOS.map(s=>s.key),...selectedIdx];
-  const allLabels={r0:'0%',r3:'3%',r5:'5%',orcan:'オルカン',sp:'S&P500',nasdaq:'Nasdaq'};
-  const allColors={r0:'#9e9e9e',r3:'#ff7043',r5:'#ffa000',orcan:'#4caf50',sp:'#2196f3',nasdaq:'#9c27b0'};
-  const targetAges=new Set([age,...Array.from({length:10},(_,i)=>age+5*(i+1)),retireAge]);
-  const milestones=[...targetAges].sort((a,b)=>a-b).filter(ta=>ta>=age&&ta<=retireAge&&simResults[allKeys[0]].some(r=>r.age===ta));
-  document.getElementById('msHead').innerHTML=`<tr><th>年齢</th>${allKeys.map(k=>`<th style="color:${allColors[k]}">${allLabels[k]}</th>`).join('')}</tr>`;
-  document.getElementById('msBody').innerHTML=milestones.map(ma=>{
-    const isR=ma===retireAge;
-    const tds=allKeys.map(k=>{const r=simResults[k].find(r=>r.age===ma);const v=r?r.total:0;
-      return`<td style="color:${allColors[k]};${isR?'font-weight:700':''}">${v>=10000?(v/10000).toFixed(2)+'億':v.toLocaleString()+'万'}</td>`;}).join('');
-    return`<tr class="${isR?'retire-row':''}"><td>${ma}歳${isR?' 🎯':''}</td>${tds}</tr>`;
-  }).join('');
-  const r0row=simResults['r0'].find(r=>r.age===retireAge);
-  const topIdx=selectedIdx[selectedIdx.length-1];
-  const topRow=simResults[topIdx]?.find(r=>r.age===retireAge);
-  if(r0row&&topRow){
-    document.getElementById('msNote').textContent=
-      `${retireAge}歳時点: 年率0%だと${r0row.total.toLocaleString()}万円、${INDEX_LABELS[topIdx]}（過去平均）だと最大${topRow.total>=10000?(topRow.total/10000).toFixed(2)+'億円':topRow.total.toLocaleString()+'万円'}。複利の差：${(topRow.total-r0row.total).toLocaleString()}万円。`;
+  if (_projData && _projData[key]) {
+    drawProjectionChart(_projData[key], SCENARIOS[key].color);
   }
-
-  // Tax table
-  const incomeLabel=incomeInput>0?`${income}万円`:`${Math.round(income)}万円（手取りから推計）`;
-  const siLabel=siInput>0?`${si}万円`:`${Math.round(si*10)/10}万円（概算14%）`;
-  const rows=[
-    ['年収',incomeLabel,false],
-    ['給与所得控除',`▲${Math.round(tax0.ed*10)/10}万円`,false],
-    ['給与所得',`${Math.round(tax0.ni)}万円`,false],
-    ['基礎控除','▲48万円',false],
-    spouse==='dependent'?['配偶者控除','▲38万円',false]:null,
-    kids>0?['扶養控除',`▲${kids*38}万円`,false]:null,
-    ['社会保険料控除',`▲${siLabel}`,false],
-    idecoOk?['iDeCo控除',`▲${Math.round(idecoMonthUse*12*10)/10}万円`,true]:null,
-    ['課税所得',`${Math.round(tax1.taxable)}万円`,true],
-    ['所得税（復興税含む）',`${Math.round(tax1.it*10)/10}万円`,false],
-    ['住民税',`${Math.round(tax1.rt*10)/10}万円`,false],
-    ['税負担合計',`${Math.round(tax1.total*10)/10}万円`,false],
-    idecoOk?['iDeCo非利用時の税負担',`${Math.round(tax0.total*10)/10}万円`,false]:null,
-    idecoOk?['節税額（年間）→ NISAへ再投資',`${Math.round(idecoSaving*10)/10}万円`,true]:null,
-  ].filter(Boolean);
-  document.getElementById('taxBody').innerHTML=rows.map(([l,v,hi])=>
-    `<tr class="${hi?'hi':''}"><td>${l}</td><td style="text-align:right">${v}</td></tr>`).join('');
-
-  // Advice
-  const advices=[];
-  if(freeMonth<=0){
-    advices.push({t:'warn',icon:'⚠️',text:`手取り${takehome}万円から固定支出を引くと余裕資金がありません。まず支出を見直してから投資を検討しましょう。`});
-  } else {
-    advices.push({t:'info',icon:'📊',text:`月の余裕資金は<strong>${Math.round(freeMonth*10)/10}万円</strong>です。まずiDeCo（月${Math.round(idecoMonthUse*10)/10}万円）で節税し、残りをNISAに回す順序が効率的です。`});
-  }
-  if(idecoOk){
-    advices.push({t:'ok',icon:'✅',text:`iDeCoをフル活用すると年間<strong>${Math.round(idecoSaving*10)/10}万円</strong>の節税。この節税分をNISAに再投資することで「節税＋複利」の二重効果が得られます。`});
-  }
-  if(!emergOk){
-    advices.push({t:'warn',icon:'⚠️',text:`緊急資金（生活費6ヶ月分 ≒ ${Math.round(emergTarget)}万円）が不足しています。投資より先に現金での緊急資金確保を優先してください。`});
-  } else {
-    advices.push({t:'ok',icon:'✅',text:`緊急資金は確保済みです。安心して投資を継続できます。`});
-  }
-  if(home==='own_loan'){
-    advices.push({t:'ok',icon:'🏠',text:'住宅ローンの団信（団体信用生命保険）が死亡保障を代替します。高額な生命保険は不要なケースが多く、掛け捨て医療保険（月3,000円程度）で十分かもしれません。'});
-  }
-  if(needIns==='high'){
-    advices.push({t:'warn',icon:'⚠️',text:'配偶者・子供がいる場合は収入保障型の生命保険（掛け捨て・月2,000〜4,000円）を検討してください。貯蓄型保険は割高なため、「保険は最小化・投資は最大化」が基本です。'});
-  }
-  if(topRow){
-    const monthly=Math.round(topRow.total*10000/((85-retireAge)*12));
-    advices.push({t:'info',icon:'📋',text:`${retireAge}歳時点の資産（${INDEX_LABELS[topIdx]}・${topRow.total>=10000?(topRow.total/10000).toFixed(2)+'億円':topRow.total.toLocaleString()+'万円'}）を${85-retireAge}年間で取り崩すと、月約<strong>${monthly.toLocaleString()}円</strong>の追加収入になります。`});
-  }
-  document.getElementById('adviceList').innerHTML=advices.map(a=>`<li class="${a.t}" data-icon="${a.icon}">${a.text}</li>`).join('');
-
-  // CTA
-  document.getElementById('ctaDesc').textContent=idecoOk
-    ?`年${Math.round(idecoSaving*10)/10}万円の節税を今すぐ始められます。口座開設は無料・5分。`
-    :'NISAで非課税の資産形成を始めましょう。';
-  document.getElementById('ctaBtns').innerHTML=
-    `<a href="https://moneykyoshitsu.com/ideco-myth-debunked/" class="cta-btn">iDeCo詳細記事を読む</a>
-     <a href="https://moneykyoshitsu.com/new-nisa-explained/" class="cta-btn sec">NISA詳細記事を読む</a>`;
 }
 
-function backToForm(){
-  document.getElementById('result').style.display='none';
-  document.getElementById('simForm').style.display='block';
-  window.scrollTo({top:0,behavior:'smooth'});
+function updateProjectionChart(monthlyYen, years) {
+  if (monthlyYen <= 0 || years <= 0) {
+    document.getElementById('projCard').style.display = 'none';
+    return;
+  }
+  document.getElementById('projCard').style.display = '';
+  _projMonth = monthlyYen;
+  _projYears = years;
+  _projData = {};
+  Object.entries(SCENARIOS).forEach(([key, sc]) => {
+    _projData[key] = runMonteCarlo(monthlyYen, years, sc.mu, sc.sigma, 500);
+  });
+  drawProjectionChart(_projData[_currentScenario], SCENARIOS[_currentScenario].color);
 }
 
-// =====================================================
-// URL PARAMS（WordPressフォームから受け取り自動計算）
-// =====================================================
-function loadFromUrlParams(){
-  const p=new URLSearchParams(window.location.search);
-  if(!p.has('takehome'))return false;
-
-  const set=(id,v)=>{const el=document.getElementById(id);if(el&&v!==null)el.value=v;};
-  const radio=(name,v)=>{const el=document.querySelector(`input[name="${name}"][value="${v}"]`);if(el)el.checked=true;};
-  const check=(name,vals)=>{
-    document.querySelectorAll(`input[name="${name}"]`).forEach(el=>el.checked=vals.includes(el.value));
-  };
-
-  set('age',     p.get('age'));
-  set('takehome',p.get('takehome'));
-  set('exp_rent',p.get('rent'));
-  set('exp_food',p.get('food'));
-  set('exp_util',p.get('util'));
-  set('exp_ins', p.get('ins'));
-  set('exp_other',p.get('other'));
-  set('exp_save',p.get('esave'));
-  set('savings', p.get('savings'));
-  set('retireAge',p.get('retire'));
-  set('income',  p.get('income'));
-  set('si',      p.get('si'));
-
-  radio('emp',      p.get('emp')     ||'employee');
-  radio('spouse',   p.get('spouse')  ||'none');
-  radio('kids',     p.get('kids')    ||'0');
-  radio('home',     p.get('home')    ||'rent');
-  radio('idecoWant',p.get('ideco')   ||'yes');
-  set('idecoCustomLimit', p.get('ideco_custom'));
-  radio('inflation',p.get('inflation')||'0');
-  radio('salaryGrowth',p.get('sg')  ||'0');
-
-  const idxParam=p.get('idx')||'orcan,sp,nasdaq';
-  check('idx', idxParam.split(','));
-
-  updateBudget();
-  return true;
-}
-
-window.addEventListener('DOMContentLoaded',()=>{
-  if(loadFromUrlParams()) calculate();
+// Income hint
+document.getElementById('income').addEventListener('input', function() {
+  const v = parseFloat(this.value) || 0;
+  const hint = v <= 200  ? '低〜中所得（税率5〜10%）'
+             : v <= 400  ? '中所得（税率10〜20%）'
+             : v <= 600  ? '中〜高所得（税率20%）'
+             : v <= 900  ? '高所得（税率23%）'
+             : v <= 1800 ? '高所得（税率33%）'
+             : '超高所得（税率40%）';
+  document.getElementById('incomeHint').textContent = hint;
 });
+document.getElementById('income').dispatchEvent(new Event('input'));
 </script>
+
 </body>
 </html>
