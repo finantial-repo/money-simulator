@@ -276,15 +276,77 @@
     </div>
 
     <div class="card">
-      <div class="card-title">その他</div>
+      <div class="card-title">その他・投資方針</div>
       <div class="field">
-        <label>iDeCoに興味はありますか？</label>
+        <label>iDeCoを活用したいですか？ <span class="tooltip-wrap"><span class="tooltip-icon" data-tip="60歳まで引き出せない代わりに所得控除で節税効果大">?</span></span></label>
         <div class="radio-group">
           <label><input type="radio" name="idecoAge" value="yes" checked> はい、老後資金を積み立てたい</label>
-          <label><input type="radio" name="idecoAge" value="no"> 流動性を重視したい</label>
+          <label><input type="radio" name="idecoAge" value="no"> いいえ、流動性を重視したい</label>
+        </div>
+      </div>
+      <div class="field">
+        <label>既存のiDeCo・NISA残高 <span class="sub">（すでに投資している合計額）</span></label>
+        <div class="input-row">
+          <input type="number" id="existingAssets" min="0" max="5000" value="0" step="10" placeholder="例: 200">
+          <span class="unit">万円</span>
+        </div>
+      </div>
+      <div class="field">
+        <label>目標退職年齢</label>
+        <div class="radio-group">
+          <label><input type="radio" name="retireAge" value="55"> 55歳（FIRE）</label>
+          <label><input type="radio" name="retireAge" value="60"> 60歳</label>
+          <label><input type="radio" name="retireAge" value="65" checked> 65歳</label>
+          <label><input type="radio" name="retireAge" value="70"> 70歳</label>
+        </div>
+      </div>
+      <div class="field">
+        <label>リスク許容度 <span class="tooltip-wrap"><span class="tooltip-icon" data-tip="将来資産シミュレーションのパラメーターに影響します">?</span></span></label>
+        <div class="radio-group">
+          <label><input type="radio" name="riskLevel" value="conservative"> 保守的（株60:債券40）</label>
+          <label><input type="radio" name="riskLevel" value="balanced" checked> バランス型（全世界株式）</label>
+          <label><input type="radio" name="riskLevel" value="aggressive"> 積極的（S&P500中心）</label>
         </div>
       </div>
     </div>
+
+    <!-- 詳細設定（任意） -->
+    <details style="margin-bottom:20px;">
+      <summary style="cursor:pointer;padding:14px 20px;background:#f5f3ee;border:1px solid #e0d8c8;border-radius:8px;font-size:13px;font-weight:700;color:#1a1a2e;list-style:none;display:flex;justify-content:space-between;align-items:center;">
+        ▼ 詳細設定（ライフイベント・税制優遇など）
+      </summary>
+      <div style="border:1px solid #e0d8c8;border-top:none;border-radius:0 0 8px 8px;padding:20px 24px;background:#fff;">
+        <div class="field">
+          <label>住宅購入予定 <span class="sub">（頭金の目安）</span></label>
+          <div class="input-row">
+            <input type="number" id="housingCost" min="0" max="3000" value="0" step="100" placeholder="例: 500">
+            <span class="unit">万円</span>
+          </div>
+        </div>
+        <div class="field">
+          <label>子供の教育費（1人あたり大学まで） <span class="sub">（大学4年含む概算）</span></label>
+          <div class="radio-group">
+            <label><input type="radio" name="eduCost" value="0" checked> 子供なし / 教育費不要</label>
+            <label><input type="radio" name="eduCost" value="1000"> 公立中心 約1,000万円/人</label>
+            <label><input type="radio" name="eduCost" value="2000"> 私立中心 約2,000万円/人</label>
+          </div>
+        </div>
+        <div class="field">
+          <label>退職金の見込み額 <span class="sub">（ある場合のみ）</span></label>
+          <div class="input-row">
+            <input type="number" id="retirementBonus" min="0" max="5000" value="0" step="100" placeholder="例: 1500">
+            <span class="unit">万円</span>
+          </div>
+        </div>
+        <div class="field">
+          <label>年金受給見込み額（月額） <span class="sub">（ねんきん定期便から確認）</span></label>
+          <div class="input-row">
+            <input type="number" id="pension" min="0" max="50" value="15" step="1" placeholder="例: 15">
+            <span class="unit">万円/月</span>
+          </div>
+        </div>
+      </div>
+    </details>
 
     <button type="button" class="btn-calc" onclick="calculate()">診断する →</button>
   </form>
@@ -359,6 +421,7 @@
         <span><b style="background:#1565c0;"></b>中央値（50th percentile）</span>
         <span><b style="background:#aaa;"></b>元本（積立額のみ）</span>
       </div>
+      <div id="detailHints"></div>
       <div class="chart-summary" id="chartSummary"></div>
       <div class="note" style="margin-top:12px;">
         ※ 過去データ（MSCI World: 年率リターン約6%・標準偏差約15%）に基づくシミュレーション。将来の運用成果を保証するものではありません。インフレ・税金は考慮していません。
@@ -440,16 +503,24 @@ function fmtMan(n) {
 // MAIN CALCULATE
 // ============================================================
 function calculate() {
-  const age    = parseInt(document.getElementById('age').value) || 30;
-  const income = parseFloat(document.getElementById('income').value) || 0;
-  const si     = parseFloat(document.getElementById('socialInsurance').value) || 0;
-  const free   = parseFloat(document.getElementById('freeMonth').value) || 0;
-  const svgs   = parseFloat(document.getElementById('savings').value) || 0;
-  const emp    = document.querySelector('input[name=emptype]:checked').value;
-  const spouse = document.querySelector('input[name=spouse]:checked').value;
-  const kids   = parseInt(document.querySelector('input[name=children]:checked').value);
-  const home   = document.querySelector('input[name=home]:checked').value;
-  const wantsIdeco = document.querySelector('input[name=idecoAge]:checked').value === 'yes';
+  const age         = parseInt(document.getElementById('age').value) || 30;
+  const income      = parseFloat(document.getElementById('income').value) || 0;
+  const si          = parseFloat(document.getElementById('socialInsurance').value) || 0;
+  const free        = parseFloat(document.getElementById('freeMonth').value) || 0;
+  const svgs        = parseFloat(document.getElementById('savings').value) || 0;
+  const existing    = parseFloat(document.getElementById('existingAssets').value) || 0;
+  const retireAge   = parseInt(document.querySelector('input[name=retireAge]:checked').value) || 65;
+  const riskLevel   = document.querySelector('input[name=riskLevel]:checked').value;
+  const emp         = document.querySelector('input[name=emptype]:checked').value;
+  const spouse      = document.querySelector('input[name=spouse]:checked').value;
+  const kids        = parseInt(document.querySelector('input[name=children]:checked').value);
+  const home        = document.querySelector('input[name=home]:checked').value;
+  const wantsIdeco  = document.querySelector('input[name=idecoAge]:checked').value === 'yes';
+  // 詳細設定（任意）
+  const housingCost = parseFloat(document.getElementById('housingCost').value) || 0;
+  const eduCostPer  = parseInt(document.querySelector('input[name=eduCost]:checked').value) || 0;
+  const retireBonus = parseFloat(document.getElementById('retirementBonus').value) || 0;
+  const pension     = parseFloat(document.getElementById('pension').value) || 0;
 
   // --- 税計算（iDeCoなし） ---
   const empDed  = employmentDeduction(income);
@@ -580,7 +651,7 @@ function calculate() {
     spouse === 'dependent' ? ['─ 配偶者控除', '▲ 38万円', false] : null,
     kids > 0 ? ['─ 扶養控除', `▲ ${kids * 38}万円`, false] : null,
     ['─ 社会保険料控除', `▲ ${si}万円`, false],
-    idecoOk ? ['─ iDeCo（小規模企業共済等掛金控除）', `▲ ${idecoYearUse}万円`, true] : null,
+    idecoOk ? ['─ iDeCo（小規模企業共済等掛金控除）', `▲ ${Math.round(idecoYearUse * 10) / 10}万円`, true] : null,
     ['課税所得（iDeCo適用後）', `${Math.round(taxable1)}万円`, true],
     ['所得税（復興税含む）', `${Math.round(incomeTax1 * 10) / 10}万円`, false],
     ['住民税（概算）', `${Math.round(residentTax1 * 10) / 10}万円`, false],
@@ -657,8 +728,44 @@ function calculate() {
 
   // 将来資産チャートを更新
   const totalMonthly = idecoMonthRec + nisaMonthRec;   // 万円/月
-  const yearsToRetire = Math.max(5, 65 - age);
-  updateProjectionChart(totalMonthly * 10000, yearsToRetire);  // 円単位に変換
+  const yearsToRetire = Math.max(5, retireAge - age);
+  // リスク許容度に応じてシナリオを選択
+  const scenarioKey = riskLevel === 'conservative' ? 'bond'
+                    : riskLevel === 'aggressive'   ? 'sp500'
+                    :                               'world';
+  _currentScenario = scenarioKey;
+  // シナリオ選択ボタンを更新
+  Object.keys(SCENARIOS).forEach(k => {
+    const pill = document.getElementById(`pill-${k}`);
+    if (pill) {
+      const sc = SCENARIOS[k];
+      if (k === scenarioKey) {
+        pill.classList.add('active');
+        pill.style.background = sc.color;
+        pill.style.color = '#fff';
+      } else {
+        pill.classList.remove('active');
+        pill.style.background = 'transparent';
+        pill.style.color = sc.color;
+      }
+    }
+  });
+  updateProjectionChart(totalMonthly * 10000, yearsToRetire, existing * 10000);  // 円単位に変換
+
+  // 詳細設定サマリー（ライフイベント・退職金など）を追加表示
+  const detailHints = [];
+  if (housingCost > 0) detailHints.push(`住宅頭金 ${housingCost}万円`);
+  if (eduCostPer > 0 && kids > 0) detailHints.push(`教育費 ${eduCostPer * kids}万円（${kids}人分）`);
+  if (retireBonus > 0) detailHints.push(`退職金 ${retireBonus}万円`);
+  if (pension > 0) detailHints.push(`年金 月${pension}万円（65歳〜）`);
+  if (existing > 0) detailHints.push(`既存資産 ${existing}万円を含む`);
+
+  const detailEl = document.getElementById('detailHints');
+  if (detailEl) {
+    detailEl.innerHTML = detailHints.length > 0
+      ? `<p style="font-size:12px;color:#888;margin:8px 0 0;">${detailHints.join(' ／ ')}</p>`
+      : '';
+  }
 }
 
 function scrollToForm() {
@@ -696,7 +803,7 @@ function percentile(sorted, p) {
 }
 
 // 年ごとのパーセンタイル計算（モンテカルロ）
-function runMonteCarlo(monthlyYen, years, mu, sigma, numSims = 500) {
+function runMonteCarlo(monthlyYen, years, mu, sigma, numSims = 500, initialYen = 0) {
   const mMu    = Math.pow(1 + mu, 1 / 12) - 1;
   const mSigma = sigma / Math.sqrt(12);
 
@@ -704,8 +811,8 @@ function runMonteCarlo(monthlyYen, years, mu, sigma, numSims = 500) {
   const snapshots = Array.from({ length: years + 1 }, () => []);
 
   for (let s = 0; s < numSims; s++) {
-    let val = 0;
-    snapshots[0].push(0);
+    let val = initialYen;    // 既存残高から開始
+    snapshots[0].push(val);
     for (let yr = 1; yr <= years; yr++) {
       for (let m = 0; m < 12; m++) {
         const r = mMu + mSigma * boxMuller();
@@ -717,7 +824,7 @@ function runMonteCarlo(monthlyYen, years, mu, sigma, numSims = 500) {
 
   return snapshots.map((data, yr) => {
     const sorted = [...data].sort((a, b) => a - b);
-    const simple = monthlyYen * 12 * yr;           // 元本のみ
+    const simple = initialYen + monthlyYen * 12 * yr;  // 既存資産 + 積立元本
     return {
       yr,
       p10: percentile(sorted, 0.10),
@@ -832,8 +939,8 @@ function switchScenario(key) {
   }
 }
 
-function updateProjectionChart(monthlyYen, years) {
-  if (monthlyYen <= 0 || years <= 0) {
+function updateProjectionChart(monthlyYen, years, initialYen = 0) {
+  if ((monthlyYen <= 0 && initialYen <= 0) || years <= 0) {
     document.getElementById('projCard').style.display = 'none';
     return;
   }
@@ -842,7 +949,7 @@ function updateProjectionChart(monthlyYen, years) {
   _projYears = years;
   _projData = {};
   Object.entries(SCENARIOS).forEach(([key, sc]) => {
-    _projData[key] = runMonteCarlo(monthlyYen, years, sc.mu, sc.sigma, 500);
+    _projData[key] = runMonteCarlo(monthlyYen, years, sc.mu, sc.sigma, 500, initialYen);
   });
   drawProjectionChart(_projData[_currentScenario], SCENARIOS[_currentScenario].color);
 }
