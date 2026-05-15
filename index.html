@@ -386,6 +386,16 @@
             <div style="font-size:10px;color:#888;margin-top:2px;">年率+8.5%、標準偏差22.0%</div>
           </div>
           <div>
+            <label style="font-size:12px;color:#666;display:flex;align-items:center;gap:4px;">
+              <span style="width:10px;height:10px;background:#e65100;border-radius:2px;display:inline-block;"></span>
+              日経225（日本株）</label>
+            <div class="input-row">
+              <input type="number" id="holdingNikkei" min="0" max="5000" value="0" step="10" placeholder="0">
+              <span class="unit">万円</span>
+            </div>
+            <div style="font-size:10px;color:#888;margin-top:2px;">年率+4.5%、標準偏差20.0%</div>
+          </div>
+          <div>
             <label style="font-size:12px;color:#666;">現金・預貯金・債券</label>
             <div class="input-row">
               <input type="number" id="holdingCash" min="0" max="5000" value="0" step="10" placeholder="0">
@@ -553,7 +563,8 @@
         <button class="scenario-pill active" id="pill-world"  onclick="switchScenario('world')"  style="color:#1565c0;border-color:#1565c0;">オルカン（全世界株）</button>
         <button class="scenario-pill" id="pill-sp500"  onclick="switchScenario('sp500')"  style="color:#2e7d32;border-color:#2e7d32;">S&amp;P500</button>
         <button class="scenario-pill" id="pill-nasdaq" onclick="switchScenario('nasdaq')" style="color:#880e4f;border-color:#880e4f;">Nasdaq-100</button>
-        <button class="scenario-pill" id="pill-bond"   onclick="switchScenario('bond')"   style="color:#e65100;border-color:#e65100;">保守的（株60:債券40）</button>
+        <button class="scenario-pill" id="pill-nikkei" onclick="switchScenario('nikkei')" style="color:#e65100;border-color:#e65100;">日経225</button>
+        <button class="scenario-pill" id="pill-bond"   onclick="switchScenario('bond')"   style="color:#795548;border-color:#795548;">保守的（株60:債券40）</button>
       </div>
       <div class="chart-wrap">
         <svg class="chart-svg" id="projChart" viewBox="0 0 640 300" preserveAspectRatio="xMidYMid meet"></svg>
@@ -658,16 +669,19 @@ function calculate() {
   const holdACWI   = parseFloat(document.getElementById('holdingACWI')?.value)   || 0;
   const holdSP500  = parseFloat(document.getElementById('holdingSP500')?.value)  || 0;
   const holdNasdaq = parseFloat(document.getElementById('holdingNasdaq')?.value) || 0;
+  const holdNikkei = parseFloat(document.getElementById('holdingNikkei')?.value) || 0;
   const holdCash   = parseFloat(document.getElementById('holdingCash')?.value)   || 0;
-  const totalHolding = holdACWI + holdSP500 + holdNasdaq + holdCash;
-  // 保有資産合計をexistingAssetsに反映（フォームの入力値は参考として残す）
+  const totalHolding = holdACWI + holdSP500 + holdNasdaq + holdNikkei + holdCash;
+  // 保有資産合計をexistingAssetsに反映
   const existingFromForm = parseFloat(document.getElementById('existingAssets').value) || 0;
   const existing = totalHolding > 0 ? totalHolding : existingFromForm;
-  // 保有資産の加重平均パラメーター計算
-  const initMu = totalHolding > 0 ? (holdACWI * 0.060 + holdSP500 * 0.068 + holdNasdaq * 0.085 + holdCash * 0.005) / totalHolding : 0.060;
+  // 保有資産の加重平均パラメーター計算（日経225を追加）
+  const initMu = totalHolding > 0
+    ? (holdACWI*0.060 + holdSP500*0.068 + holdNasdaq*0.085 + holdNikkei*0.045 + holdCash*0.005) / totalHolding
+    : 0.060;
   const initSigma = totalHolding > 0 ? Math.sqrt(
     Math.pow(holdACWI * 0.148, 2) + Math.pow(holdSP500 * 0.165, 2) +
-    Math.pow(holdNasdaq * 0.220, 2) + Math.pow(holdCash * 0.020, 2)
+    Math.pow(holdNasdaq * 0.220, 2) + Math.pow(holdNikkei * 0.200, 2) + Math.pow(holdCash * 0.020, 2)
   ) / totalHolding : 0.148;
   // 保有資産合計表示更新
   const htEl = document.getElementById('holdingTotal');
@@ -972,7 +986,7 @@ function calculate() {
     (housingCost + eduCostPer * kids) * 10000,  // ライフイベント支出合計
     initMu,                  // 保有資産の加重平均リターン
     initSigma,               // 保有資産の加重平均ボラティリティ
-    { acwi: holdACWI, sp500: holdSP500, nasdaq: holdNasdaq, cash: holdCash }, // 指数別保有額（万円）
+    { acwi: holdACWI, sp500: holdSP500, nasdaq: holdNasdaq, nikkei: holdNikkei, cash: holdCash }, // 指数別保有額（万円）
   );
 
   // 詳細設定サマリー（ライフイベント・退職金など）を追加表示
@@ -1004,7 +1018,8 @@ const SCENARIOS = {
   world:  { label: 'オルカン（全世界株）', mu: 0.060, sigma: 0.148, color: '#1565c0' },
   sp500:  { label: 'S&P500',              mu: 0.068, sigma: 0.165, color: '#2e7d32' },
   nasdaq: { label: 'Nasdaq-100',          mu: 0.085, sigma: 0.220, color: '#880e4f' },
-  bond:   { label: '株60:債券40',         mu: 0.042, sigma: 0.090, color: '#e65100' },
+  nikkei: { label: '日経225',             mu: 0.045, sigma: 0.200, color: '#e65100' },
+  bond:   { label: '株60:債券40',         mu: 0.042, sigma: 0.090, color: '#795548' },
 };
 
 // 保有資産のパラメーター（既存資産は銘柄別に成長させる）
@@ -1012,6 +1027,7 @@ const ASSET_PARAMS = {
   acwi:   { mu: 0.060, sigma: 0.148 },
   sp500:  { mu: 0.068, sigma: 0.165 },
   nasdaq: { mu: 0.085, sigma: 0.220 },
+  nikkei: { mu: 0.045, sigma: 0.200 },  // 日経225（長期平均・失われた20年含む）
   cash:   { mu: 0.005, sigma: 0.020 },
 };
 
@@ -1052,8 +1068,9 @@ function runMonteCarlo(monthlyYen, years, mu, sigma, numSims = 500, initialYen =
   const holdAssets = [
     { yen: (holdings.acwi   || 0) * 10000, mu: Math.pow(1.060, 1/12) - 1, sg: 0.148 / Math.sqrt(12) },
     { yen: (holdings.sp500  || 0) * 10000, mu: Math.pow(1.068, 1/12) - 1, sg: 0.165 / Math.sqrt(12) },
-    { yen: (holdings.nasdaq || 0) * 10000, mu: Math.pow(1.085, 1/12) - 1, sg: 0.220 / Math.sqrt(12) },
-    { yen: (holdings.cash   || 0) * 10000, mu: Math.pow(1.005, 1/12) - 1, sg: 0.020 / Math.sqrt(12) },
+    { yen: (holdings.nasdaq  || 0) * 10000, mu: Math.pow(1.085, 1/12) - 1, sg: 0.220 / Math.sqrt(12) },
+    { yen: (holdings.nikkei  || 0) * 10000, mu: Math.pow(1.045, 1/12) - 1, sg: 0.200 / Math.sqrt(12) },
+    { yen: (holdings.cash    || 0) * 10000, mu: Math.pow(1.005, 1/12) - 1, sg: 0.020 / Math.sqrt(12) },
   ];
   const hasDetailedHoldings = holdAssets.some(h => h.yen > 0);
 
