@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>資産形成シミュレーター｜iDeCo・NISA・保険 最適配分診断</title>
 <meta name="description" content="年収・年齢・家族構成を入力するだけで、iDeCo・NISAへの最適な掛け金と節税額、保険の必要性を自動診断。口座開設まで一気通貫でサポート。">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1410073512855784" crossorigin="anonymous"></script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
@@ -327,11 +328,14 @@
       </div>
 
       <div class="field">
-        <label>現在の貯蓄額（緊急資金として確認）</label>
+        <label>生活防衛資金（すぐ引き出せる現金） <span class="tooltip-wrap"><span class="tooltip-icon" data-tip="普通預金など。投資には回さず、緊急時のために取り置く資金。目安は生活費6ヶ月分">?</span></span></label>
         <div class="input-row">
           <input type="number" id="savings" min="0" max="5000" value="100" step="10" placeholder="例: 100">
           <span class="unit">万円</span>
         </div>
+        <p style="font-size:11px;color:#888;margin:4px 0 0;">
+          ※「現金・預貯金・債券（投資分）」とは別です。このお金は投資に回さず生活防衛用として保有します。
+        </p>
       </div>
     </div>
 
@@ -490,25 +494,71 @@
             <label><input type="radio" name="eduCost" value="2000"> 私立中心 約2,000万円/人</label>
           </div>
         </div>
-        <div class="field">
-          <label>退職金の見込み額 <span class="sub">（ある場合のみ）</span></label>
-          <div class="input-row">
-            <input type="number" id="retirementBonus" min="0" max="5000" value="0" step="100" placeholder="例: 1500">
-            <span class="unit">万円</span>
+        <!-- 退職金と退職金控除 -->
+        <div style="background:#eef4fb;border-radius:8px;padding:14px 18px;margin-bottom:16px;">
+          <p style="font-size:12px;font-weight:700;color:#2c6fad;margin:0 0 12px;letter-spacing:1px;">💼 退職金（税引後の手取りを自動計算します）</p>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <div class="field" style="margin:0;">
+              <label style="font-size:12px;">退職金の見込み額（税引前）</label>
+              <div class="input-row">
+                <input type="number" id="retirementBonus" min="0" max="5000" value="0" step="100" placeholder="例: 1500" oninput="calcRetirementTaxDisplay()">
+                <span class="unit">万円</span>
+              </div>
+            </div>
+            <div class="field" style="margin:0;">
+              <label style="font-size:12px;">勤続年数（退職金控除の計算に使用）</label>
+              <div class="input-row">
+                <input type="number" id="yearsWorked" min="1" max="50" value="30" step="1" placeholder="例: 30" oninput="calcRetirementTaxDisplay()">
+                <span class="unit">年</span>
+              </div>
+            </div>
+          </div>
+          <div id="retirementTaxDetail" style="margin-top:12px;display:none;">
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;font-size:12px;">
+              <div style="background:#fff;border-radius:6px;padding:8px 10px;text-align:center;">
+                <div style="color:#888;margin-bottom:2px;">退職所得控除額</div>
+                <div id="rtDeduction" style="font-size:15px;font-weight:700;color:#1a1a2e;">—</div>
+              </div>
+              <div style="background:#fff;border-radius:6px;padding:8px 10px;text-align:center;">
+                <div style="color:#888;margin-bottom:2px;">退職金にかかる税金</div>
+                <div id="rtTax" style="font-size:15px;font-weight:700;color:#c0392b;">—</div>
+              </div>
+              <div style="background:#1a1a2e;border-radius:6px;padding:8px 10px;text-align:center;">
+                <div style="color:#aab8cc;margin-bottom:2px;">手取り退職金</div>
+                <div id="rtNet" style="font-size:15px;font-weight:700;color:#e8d5a0;">—</div>
+              </div>
+            </div>
+            <p style="font-size:10px;color:#888;margin:6px 0 0;">
+              ※ 退職所得控除：勤続20年以下は40万円×年数（最低80万円）、20年超は800万円+70万円×(年数-20)。課税退職所得=(退職金-控除)×1/2に累進課税。
+            </p>
           </div>
         </div>
+
         <div class="field">
-          <label>年金受給見込み額（月額） <span class="sub">（ねんきん定期便から確認）</span></label>
+          <label>年金受給見込み額（月額） <span class="sub">（ねんきん定期便で確認）</span>
+            <span class="tooltip-wrap"><span class="tooltip-icon" data-tip="65歳から受け取れる見込み額。ねんきんネットで正確な金額を確認できます">?</span></span>
+          </label>
           <div class="input-row">
             <input type="number" id="pension" min="0" max="50" value="15" step="1" placeholder="例: 15">
             <span class="unit">万円/月</span>
           </div>
+          <p style="font-size:11px;color:#888;margin:4px 0 0;">
+            退職後の健康保険料（国民健康保険目安）: 年金収入 × 約10%＋均等割を自動考慮します
+          </p>
         </div>
       </div>
     </details>
 
     <button type="button" class="btn-calc" onclick="calculate()">診断する →</button>
   </form>
+
+  <!-- 診断ボタン下の広告 -->
+  <div style="margin:16px 0;text-align:center;">
+    <ins class="adsbygoogle"
+      style="display:block" data-ad-client="ca-pub-1410073512855784"
+      data-ad-slot="auto" data-ad-format="auto" data-full-width-responsive="true"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+  </div>
 
   <!-- RESULT -->
   <div id="result">
@@ -560,6 +610,18 @@
       <div class="note">※ 所得税に復興特別所得税2.1%を加算。住民税は均等割を含みません。iDeCo拠出は小規模企業共済等掛金控除として適用。</div>
     </div>
 
+    <!-- 退職後の月次収支シミュレーション -->
+    <div class="card" id="retireCard" style="display:none">
+      <div class="card-title">退職後の月次収支シミュレーション</div>
+      <p style="font-size:13px;color:#666;margin-bottom:16px;line-height:1.7;">
+        退職時点の推定資産（Monte Carlo中央値）をもとに、毎月どれだけ引き出せるか・社会保険料はいくらかを試算します。
+      </p>
+      <div id="retireSimTable"></div>
+      <div class="note" style="margin-top:12px;">
+        ※ 投資引き出し額は「4%ルール」（年間4%=月1/300）に基づく持続可能な引き出し額の目安。健康保険料は年金収入の約10%+均等割（月約5,000円）で概算。退職金の税は退職所得控除を適用した手取り額。
+      </div>
+    </div>
+
     <!-- PROJECTION CHART -->
     <div class="card" id="projCard" style="display:none">
       <div class="card-title">将来資産シミュレーション（モンテカルロ法）</div>
@@ -593,6 +655,14 @@
     <div class="card">
       <div class="card-title">あなたへのアドバイス</div>
       <ul class="advice-list" id="adviceList"></ul>
+    </div>
+
+    <!-- 結果下の広告 -->
+    <div style="margin:20px 0;text-align:center;">
+      <ins class="adsbygoogle"
+        style="display:block" data-ad-client="ca-pub-1410073512855784"
+        data-ad-slot="auto" data-ad-format="auto" data-full-width-responsive="true"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
     </div>
 
     <!-- CTA -->
@@ -959,9 +1029,105 @@ function calculate() {
   document.getElementById('ctaDesc').textContent = ctaDesc;
   document.getElementById('ctaBtns').innerHTML = ctaBtns;
 
-  // 将来資産チャートを更新
-  const totalMonthly = idecoMonthRec + nisaMonthRec;   // 万円/月（iDeCo節税再投資分は nisaMonthRec に含まれている）
+  // ============================================================
+  // 将来資産・退職後計算に必要な変数（先に定義）
+  // ============================================================
+  const totalMonthly = idecoMonthRec + nisaMonthRec;   // 万円/月
   const yearsToRetire = Math.max(5, retireAge - age);
+
+  // ============================================================
+  // 退職後の月次収支シミュレーション
+  // ============================================================
+  const retireCard = document.getElementById('retireCard');
+  const yearsWorked = parseInt(document.getElementById('yearsWorked')?.value) || 30;
+  const retireTaxResult = calcRetirementTaxAmt(retireBonus, yearsWorked);
+
+  if (retireCard && (retireBonus > 0 || pension > 0)) {
+    retireCard.style.display = '';
+
+    // 退職時点の推定投資資産（Monte Carlo計算前の概算：積立 × FVIFA(6%, years)）
+    const mu6 = Math.pow(1.06, 1/12) - 1;
+    const n = yearsToRetire * 12;
+    const fvifa = n > 0 ? (Math.pow(1 + mu6, n) - 1) / mu6 : 0;
+    const estimatedPortfolio = Math.round(
+      totalMonthly * 10000 * fvifa / 10000 + existing
+    );  // 万円単位
+
+    // 退職金手取り
+    const netRetireBonus = retireTaxResult.net;
+
+    // 退職時点の総資産
+    const totalAtRetire = estimatedPortfolio + netRetireBonus;
+
+    // 月次収支計算
+    const monthlyWithdrawal = Math.round(totalAtRetire / 300);  // 4%ルール（年4%=月1/300）
+    const pensionAfterTax   = pension;  // 年金は非課税枠内（公的年金等控除後）として概算
+
+    // 退職後の健康保険料（国民健康保険概算）
+    const pensionAnnual = pension * 12;
+    // 公的年金等控除後の所得（65歳以上：130万以下は0、130万超は収入-110万）
+    const pensionTaxable = Math.max(0, pensionAnnual - 110);
+    // 国保保険料（所得割 7-10% + 均等割 月約0.5万）
+    const healthInsMonthly = Math.round((pensionTaxable * 0.09 / 12 + 0.5) * 10) / 10;
+
+    const monthlyIncome  = monthlyWithdrawal + pensionAfterTax;
+    const monthlyExpense = healthInsMonthly;
+    const monthlyNet     = monthlyIncome - monthlyExpense;
+
+    // 「何年持つか」計算（月次複利、引き出しありの場合）
+    let remainingAsset = totalAtRetire;
+    let yearsLast = 0;
+    const monthlyWithdrawYen = (monthlyWithdrawal + monthlyExpense - pensionAfterTax) * 10000;
+    const mRate = mu6;
+    if (monthlyWithdrawYen > 0) {
+      while (remainingAsset * 10000 > 0 && yearsLast < 80) {
+        remainingAsset = remainingAsset * 10000 * (1 + mRate) - monthlyWithdrawYen;
+        remainingAsset /= 10000;
+        yearsLast += 1/12;
+      }
+    } else {
+      yearsLast = 99;
+    }
+    const yearsLastRounded = Math.floor(yearsLast);
+    const ageAssetZero = retireAge + yearsLastRounded;
+    const durabilityText = yearsLastRounded >= 99 ? '資産が尽きることはありません' : `${ageAssetZero}歳頃まで持続（退職から約${yearsLastRounded}年）`;
+
+    document.getElementById('retireSimTable').innerHTML = `
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+        <div style="background:#1a1a2e;border-radius:10px;padding:18px;text-align:center;">
+          <p style="font-size:11px;color:#aab8cc;margin:0 0 4px;">退職時点の推定投資資産</p>
+          <p style="font-size:22px;font-weight:800;color:#e8d5a0;margin:0;">${estimatedPortfolio.toLocaleString()}万円</p>
+          <p style="font-size:10px;color:#7a8aa0;margin:4px 0 0;">（積立${yearsToRetire}年後・年率6%中央値概算）</p>
+        </div>
+        <div style="background:${retireBonus > 0 ? '#2e7d32' : '#555'};border-radius:10px;padding:18px;text-align:center;">
+          <p style="font-size:11px;color:#c8e6c9;margin:0 0 4px;">退職金 手取り額</p>
+          <p style="font-size:22px;font-weight:800;color:#fff;margin:0;">${retireBonus > 0 ? netRetireBonus.toLocaleString() + '万円' : '—'}</p>
+          <p style="font-size:10px;color:#a5d6a7;margin:4px 0 0;">
+            ${retireBonus > 0 ? `控除額${retireTaxResult.deduction}万円 / 税金${retireTaxResult.tax}万円` : '（退職金なし）'}
+          </p>
+        </div>
+      </div>
+      <div style="background:#f5f3ee;border-radius:10px;padding:18px;margin-bottom:12px;">
+        <p style="font-size:12px;font-weight:700;color:#b8860b;letter-spacing:2px;margin:0 0 12px;">📅 退職後の月次収支（${retireAge}歳以降）</p>
+        <table style="width:100%;border-collapse:collapse;font-size:13px;">
+          <tr><th style="background:#1a1a2e;color:#fff;padding:8px 12px;text-align:left;">項目</th><th style="background:#1a1a2e;color:#fff;padding:8px 12px;text-align:right;">月額</th></tr>
+          <tr><td style="padding:8px 12px;border-bottom:1px solid #e0d0a0;">📈 投資資産からの引き出し（4%ルール）</td><td style="padding:8px 12px;border-bottom:1px solid #e0d0a0;text-align:right;color:#2e7d32;font-weight:700;">+${monthlyWithdrawal.toLocaleString()}万円</td></tr>
+          <tr style="background:#fdf8ed;"><td style="padding:8px 12px;border-bottom:1px solid #e0d0a0;">🏦 年金収入（入力値）</td><td style="padding:8px 12px;border-bottom:1px solid #e0d0a0;text-align:right;color:#2e7d32;font-weight:700;">+${pension}万円</td></tr>
+          <tr><td style="padding:8px 12px;border-bottom:1px solid #e0d0a0;">🏥 国民健康保険料（概算）</td><td style="padding:8px 12px;border-bottom:1px solid #e0d0a0;text-align:right;color:#c0392b;">▲${healthInsMonthly}万円</td></tr>
+          <tr style="background:#1a1a2e;"><td style="padding:10px 12px;color:#fff;font-weight:700;">月次収支（生活費除く）</td><td style="padding:10px 12px;text-align:right;font-size:18px;font-weight:800;color:${monthlyNet >= 0 ? '#a5d6a7' : '#ef9a9a'};">${monthlyNet >= 0 ? '+' : ''}${Math.round(monthlyNet * 10)/10}万円</td></tr>
+        </table>
+      </div>
+      <div style="background:${ageAssetZero >= 90 ? '#eef7f1' : ageAssetZero >= 80 ? '#fff3e0' : '#fdf0ef'};border-radius:8px;padding:14px 18px;border-left:5px solid ${ageAssetZero >= 90 ? '#1e7e4a' : ageAssetZero >= 80 ? '#e65100' : '#c0392b'};">
+        <p style="font-size:13px;font-weight:700;color:${ageAssetZero >= 90 ? '#1e7e4a' : ageAssetZero >= 80 ? '#e65100' : '#c0392b'};margin:0 0 4px;">💡 資産の持続性</p>
+        <p style="font-size:14px;color:#444;margin:0;">${durabilityText}</p>
+        <p style="font-size:11px;color:#888;margin:6px 0 0;">※ 投資資産の年率6%運用・月${Math.round(monthlyWithdrawal + monthlyExpense - pensionAfterTax * 10)/10}万円の実質引き出しを想定</p>
+      </div>
+    `;
+  } else if (retireCard) {
+    retireCard.style.display = 'none';
+  }
+
+  // 将来資産チャートを更新（totalMonthly, yearsToRetireは上で定義済み）
   // リスク許容度に応じてシナリオを選択
   const scenarioKey = riskLevel === 'conservative' ? 'bond'
                     : riskLevel === 'aggressive'   ? 'sp500'
@@ -1370,6 +1536,65 @@ function syncSlider() {
   checkInvestWarning(parseFloat(numInput.value), maxInvest);
 }
 
+// ============================================================
+// 退職金税計算（リアルタイム表示用）
+// ============================================================
+function calcRetirementTaxAmt(retireBonus, yearsWorked) {
+  if (retireBonus <= 0) return { deduction: 0, taxableIncome: 0, tax: 0, net: 0 };
+
+  // 退職所得控除額
+  const deduction = yearsWorked <= 20
+    ? Math.max(80, 40 * yearsWorked)
+    : 800 + 70 * (yearsWorked - 20);
+
+  // 課税退職所得 = (退職金 - 控除) × 1/2（ただし控除後がマイナスなら0）
+  const taxableIncome = Math.max(0, (retireBonus - deduction) / 2);
+
+  // 所得税（退職所得は分離課税で通常の累進税率適用）
+  const incomeTax = (function() {
+    const brackets = [
+      [195, 0.05, 0], [330, 0.10, 9.75], [695, 0.20, 42.75],
+      [900, 0.23, 63.6], [1800, 0.33, 153.6], [4000, 0.40, 279.6],
+      [Infinity, 0.45, 479.6]
+    ];
+    for (const [lim, rate, ded] of brackets) {
+      if (taxableIncome <= lim) return Math.max(0, taxableIncome * rate - ded) * 1.021;
+    }
+    return 0;
+  })();
+
+  // 住民税（退職所得の10%）
+  const residentTax = taxableIncome * 0.10;
+  const totalTax = incomeTax + residentTax;
+
+  return {
+    deduction: Math.round(deduction),
+    taxableIncome: Math.round(taxableIncome * 10) / 10,
+    tax: Math.round(totalTax * 10) / 10,
+    net: Math.round((retireBonus - totalTax) * 10) / 10
+  };
+}
+
+function calcRetirementTaxDisplay() {
+  const bonus = parseFloat(document.getElementById('retirementBonus')?.value) || 0;
+  const years = parseInt(document.getElementById('yearsWorked')?.value) || 30;
+  const detailEl = document.getElementById('retirementTaxDetail');
+
+  if (bonus <= 0) {
+    if (detailEl) detailEl.style.display = 'none';
+    return;
+  }
+
+  const r = calcRetirementTaxAmt(bonus, years);
+  if (detailEl) {
+    detailEl.style.display = '';
+    document.getElementById('rtDeduction').textContent = `${r.deduction}万円`;
+    document.getElementById('rtTax').textContent = r.tax > 0 ? `${r.tax}万円` : '非課税';
+    document.getElementById('rtNet').textContent = `${r.net}万円`;
+  }
+}
+
+// ============================================================
 // 保有資産の合計を「既存の投資残高合計」欄に自動コピー
 function syncHoldingTotal() {
   const acwi   = parseFloat(document.getElementById('holdingACWI')?.value)   || 0;
