@@ -196,10 +196,11 @@
       <div class="field">
         <label>雇用形態</label>
         <div class="radio-group">
-          <label><input type="radio" name="emptype" value="employee" checked> 会社員<br><small>（企業年金なし）</small></label>
-          <label><input type="radio" name="emptype" value="employee_pension"> 会社員<br><small>（企業年金あり）</small></label>
-          <label><input type="radio" name="emptype" value="civil"> 公務員</label>
-          <label><input type="radio" name="emptype" value="self"> 自営業</label>
+          <label><input type="radio" name="emptype" value="employee" checked> 会社員<br><small>（企業年金なし）上限2.3万/月</small></label>
+          <label><input type="radio" name="emptype" value="employee_dc_only"> 会社員<br><small>（企業型DCのみ・DBなし）上限2.0万/月</small></label>
+          <label><input type="radio" name="emptype" value="employee_pension"> 会社員<br><small>（DB型年金あり）上限1.2万/月</small></label>
+          <label><input type="radio" name="emptype" value="civil"> 公務員<br><small>上限1.2万/月</small></label>
+          <label><input type="radio" name="emptype" value="self"> 自営業<br><small>上限6.8万/月</small></label>
         </div>
       </div>
     </div>
@@ -284,6 +285,13 @@
           <label><input type="radio" name="idecoAge" value="no"> いいえ、流動性を重視したい</label>
         </div>
       </div>
+      <div class="field" id="reinvestField">
+        <label>iDeCoの節税額をそのままNISAに追加投資しますか？ <span class="tooltip-wrap"><span class="tooltip-icon" data-tip="節税で浮いた分を全額NISAに回すと複利効果が最大化されます">?</span></span></label>
+        <div class="radio-group">
+          <label><input type="radio" name="reinvestIdeco" value="yes" checked> はい（節税額をNISAへ）</label>
+          <label><input type="radio" name="reinvestIdeco" value="no"> いいえ（節税額は生活費に充当）</label>
+        </div>
+      </div>
       <div class="field">
         <label>既存のiDeCo・NISA残高 <span class="sub">（すでに投資している合計額）</span></label>
         <div class="input-row">
@@ -317,11 +325,42 @@
       </summary>
       <div style="border:1px solid #e0d8c8;border-top:none;border-radius:0 0 8px 8px;padding:20px 24px;background:#fff;">
         <div class="field">
-          <label>住宅購入予定 <span class="sub">（頭金の目安）</span></label>
+          <label>住宅ローン控除額（年間） <span class="sub">（ある場合のみ。源泉徴収票の「住宅借入金等特別控除」の額）</span>
+            <span class="tooltip-wrap"><span class="tooltip-icon" data-tip="住宅ローン控除があるとふるさと納税の上限が大幅に下がります">?</span></span>
+          </label>
+          <div class="input-row">
+            <input type="number" id="mortgageCredit" min="0" max="40" value="0" step="1" placeholder="例: 21">
+            <span class="unit">万円</span>
+          </div>
+        </div>
+        <div class="field">
+          <label>住宅購入予定 <span class="sub">（頭金の目安。将来資産計算に反映）</span></label>
           <div class="input-row">
             <input type="number" id="housingCost" min="0" max="3000" value="0" step="100" placeholder="例: 500">
             <span class="unit">万円</span>
           </div>
+        </div>
+        <div class="field">
+          <label>月の支出内訳で「自由金額」を逆算する <span class="sub">（任意）</span></label>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px;">
+            <div>
+              <label style="font-size:12px;color:#666;">家賃・住宅ローン</label>
+              <div class="input-row"><input type="number" id="expRent" min="0" max="50" value="0" step="1" placeholder="例: 10"><span class="unit">万円/月</span></div>
+            </div>
+            <div>
+              <label style="font-size:12px;color:#666;">食費・日用品</label>
+              <div class="input-row"><input type="number" id="expFood" min="0" max="30" value="0" step="1" placeholder="例: 6"><span class="unit">万円/月</span></div>
+            </div>
+            <div>
+              <label style="font-size:12px;color:#666;">通信・光熱費</label>
+              <div class="input-row"><input type="number" id="expUtil" min="0" max="10" value="0" step="1" placeholder="例: 2"><span class="unit">万円/月</span></div>
+            </div>
+            <div>
+              <label style="font-size:12px;color:#666;">その他固定費</label>
+              <div class="input-row"><input type="number" id="expOther" min="0" max="20" value="0" step="1" placeholder="例: 3"><span class="unit">万円/月</span></div>
+            </div>
+          </div>
+          <p id="expCalcResult" style="font-size:12px;color:#888;margin:8px 0 0;"></p>
         </div>
         <div class="field">
           <label>子供の教育費（1人あたり大学まで） <span class="sub">（大学4年含む概算）</span></label>
@@ -483,10 +522,11 @@ function calcIncomeTax(taxableIncome) {
 
 // iDeCo上限 (月額)
 function idecoLimit(emptype) {
-  if (emptype === 'employee')         return 2.3;  // 23,000円
-  if (emptype === 'employee_pension') return 1.2;  // 12,000円
-  if (emptype === 'civil')            return 1.2;  // 12,000円
-  if (emptype === 'self')             return 6.8;  // 68,000円
+  if (emptype === 'employee')         return 2.3;  // 23,000円（企業年金なし）
+  if (emptype === 'employee_dc_only') return 2.0;  // 20,000円（企業型DCのみ・DBなし）
+  if (emptype === 'employee_pension') return 1.2;  // 12,000円（DB型年金あり）
+  if (emptype === 'civil')            return 1.2;  // 12,000円（公務員）
+  if (emptype === 'self')             return 6.8;  // 68,000円（自営業）
   return 2.3;
 }
 
@@ -516,11 +556,28 @@ function calculate() {
   const kids        = parseInt(document.querySelector('input[name=children]:checked').value);
   const home        = document.querySelector('input[name=home]:checked').value;
   const wantsIdeco  = document.querySelector('input[name=idecoAge]:checked').value === 'yes';
+  // その他オプション
+  const reinvestIdeco = document.querySelector('input[name=reinvestIdeco]:checked')?.value === 'yes';
   // 詳細設定（任意）
+  const mortgageCredit = parseFloat(document.getElementById('mortgageCredit').value) || 0;
   const housingCost = parseFloat(document.getElementById('housingCost').value) || 0;
   const eduCostPer  = parseInt(document.querySelector('input[name=eduCost]:checked').value) || 0;
   const retireBonus = parseFloat(document.getElementById('retirementBonus').value) || 0;
   const pension     = parseFloat(document.getElementById('pension').value) || 0;
+  // 支出ベース逆算（任意。入力があれば freeMonth を上書き）
+  const expRent  = parseFloat(document.getElementById('expRent').value)  || 0;
+  const expFood  = parseFloat(document.getElementById('expFood').value)  || 0;
+  const expUtil  = parseFloat(document.getElementById('expUtil').value)  || 0;
+  const expOther = parseFloat(document.getElementById('expOther').value) || 0;
+  const totalExp = expRent + expFood + expUtil + expOther;
+  // 手取り概算: (年収 - 社会保険料) ÷ 12 × 0.75 (所得税・住民税を大まかに控除)
+  const takehomeEst = Math.max(0, (income - si) / 12 * 0.75);
+  // 支出入力があれば逆算して上書き
+  const freeActual = totalExp > 0 ? Math.max(0, takehomeEst - totalExp) : free;
+  if (totalExp > 0) {
+    const expEl = document.getElementById('expCalcResult');
+    if (expEl) expEl.textContent = `手取り概算 ${Math.round(takehomeEst * 10)/10}万円 - 支出${Math.round(totalExp * 10)/10}万円 = 自由金額 ${Math.round(freeActual * 10)/10}万円`;
+  }
 
   // --- 税計算（iDeCoなし） ---
   const empDed  = employmentDeduction(income);
@@ -539,15 +596,16 @@ function calculate() {
 
   // 年齢チェック (60歳以降はiDeCoを推奨しない)
   const idecoOk = age < 60 && wantsIdeco;
-  const idecoMonthRec = idecoOk ? Math.min(idecoMonthMax, Math.max(0, free * 0.5)) : 0;
+  const idecoMonthRec = idecoOk ? Math.min(idecoMonthMax, Math.max(0, freeActual * 0.5)) : 0;
   const idecoMonthUse = idecoOk ? idecoMonthMax : 0; // フル活用推奨額で節税計算
-  const idecoYearUse  = idecoMonthUse * 12;
+  const idecoYearUse  = Math.round(idecoMonthUse * 12 * 10) / 10;
 
   // iDeCo適用後の節税
   const taxable1    = Math.max(0, taxable0 - idecoYearUse);
   const incomeTax1  = calcIncomeTax(taxable1) * 1.021;
   const residentTax1 = taxable1 * 0.10;
-  const totalTax1   = incomeTax1 + residentTax1;
+  // 住宅ローン控除は所得税から直接控除（住民税は最大13.65万円まで繰り越し）
+  const totalTax1   = Math.max(0, incomeTax1 - mortgageCredit) + Math.max(0, residentTax1 - Math.max(0, mortgageCredit - incomeTax1));
   const idecoSaving = Math.max(0, totalTax0 - totalTax1);
 
   // 実効税率
@@ -559,10 +617,23 @@ function calculate() {
     : 0.40;
   const effRate = (marginalRate * 1.021 + 0.10);
 
+  // --- ふるさと納税の上限計算 ---
+  // 住民税所得割（住宅ローン控除後）
+  const juminzeiWari = Math.max(0, residentTax1 - Math.max(0, mortgageCredit - incomeTax1));
+  // ふるさと納税 上限寄付額
+  // 上限 ≈ 住民税所得割 × 20% ÷ (90% - 所得税率 × 1.021)
+  const furusatoRate = 0.9 - marginalRate * 1.021;
+  // 結果は万円単位（juminzeiWariが万円のため）、最低2,000円(=0.2万円)の自己負担を加味
+  const furusatoLimit = furusatoRate > 0
+    ? Math.round(juminzeiWari * 0.20 / furusatoRate * 10) / 10   // 万円（1桁小数）
+    : 0;
+
   // --- NISA ---
   const nisaMonthMax = 30; // 360万/年 = 30万/月 (上限)
-  const freeAfterIdeco = Math.max(0, free - idecoMonthRec);
-  const nisaMonthRec = Math.min(nisaMonthMax, Math.max(0, freeAfterIdeco * 0.8));
+  const freeAfterIdeco = Math.max(0, freeActual - idecoMonthRec);
+  // iDeCo節税分の月額をNISAに追加するか？
+  const idecoSavingMonth = reinvestIdeco && idecoOk ? idecoSaving / 12 : 0;
+  const nisaMonthRec = Math.min(nisaMonthMax, Math.max(0, freeAfterIdeco * 0.8 + idecoSavingMonth));
 
   // --- 保険 ---
   const needLifeIns = (() => {
@@ -572,7 +643,7 @@ function calculate() {
   })();
 
   // --- 緊急資金 ---
-  const monthlyLivingCost = Math.max(10, income / 12 * 0.65 - (si / 12) - free);
+  const monthlyLivingCost = Math.max(10, income / 12 * 0.65 - (si / 12) - freeActual);
   const emergTarget = monthlyLivingCost * 6;
   const emergOk = svgs >= emergTarget;
 
@@ -619,14 +690,17 @@ function calculate() {
     : `現在の貯蓄 ${svgs}万円（${fmtMan(emergTarget - svgs)}不足）`;
 
   // --- 配分バー ---
-  const totalFree = free;
+  const totalFree = freeActual;
   const idecoP = totalFree > 0 ? Math.min(100, (idecoMonthRec / totalFree) * 100) : 0;
   const nisaP  = totalFree > 0 ? Math.min(100 - idecoP, (nisaMonthRec / totalFree) * 100) : 0;
   const insP   = needLifeIns === 'high' ? Math.min(10, 100 - idecoP - nisaP) : 0;
   const emergP = !emergOk ? Math.min(15, 100 - idecoP - nisaP - insP) : 0;
   const freeP  = Math.max(0, 100 - idecoP - nisaP - insP - emergP);
 
-  document.getElementById('allocTitle').textContent = `月 ${free}万円の内訳（推奨配分）`;
+  const furusatoTxt = furusatoLimit > 0
+    ? `（ふるさと納税 上限目安 約${Math.round(furusatoLimit)}万円。2,000円の自己負担で残りは全額控除）`
+    : '';
+  document.getElementById('allocTitle').textContent = `月 ${Math.round(freeActual * 10)/10}万円の内訳（推奨配分）${furusatoTxt}`;
   document.getElementById('allocBar').innerHTML = `
     ${idecoP > 0 ? `<div class="alloc-seg seg-ideco" style="width:${idecoP}%">iDeCo</div>` : ''}
     ${nisaP > 0  ? `<div class="alloc-seg seg-nisa"  style="width:${nisaP}%">NISA</div>` : ''}
@@ -668,8 +742,15 @@ function calculate() {
   const advices = [];
 
   if (idecoOk) {
+    const reinvestNote = reinvestIdeco
+      ? `節税分（月${Math.round(idecoSaving * 10000 / 12)}円）をNISAに追加投資する設定です。複利効果が最大化されます。`
+      : `節税分（月${Math.round(idecoSaving * 10000 / 12)}円）をNISAに追加投資すると、さらに複利効果が上がります。`;
     advices.push({ type: 'ok', icon: '✅',
-      text: `iDeCoをフル活用すると、年間 <strong>${Math.round(idecoSaving * 10) / 10}万円</strong>（月${Math.round(idecoSaving * 10000 / 12)}円）の節税になります。20年間継続すると節税額の合計は約 <strong>${Math.round(idecoSaving * 20 * 10) / 10}万円</strong> になります。` });
+      text: `iDeCoをフル活用すると、年間 <strong>${Math.round(idecoSaving * 10) / 10}万円</strong>（月${Math.round(idecoSaving * 10000 / 12)}円）の節税になります。20年間継続すると節税額の合計は約 <strong>${Math.round(idecoSaving * 20 * 10) / 10}万円</strong> になります。<br>${reinvestNote}` });
+  }
+  if (furusatoLimit > 0) {
+    advices.push({ type: 'ok', icon: '🎁',
+      text: `あなたのふるさと納税の<strong>上限目安は年間 約${Math.round(furusatoLimit)}万円</strong>です（2,000円の自己負担で残りは全額控除）。${mortgageCredit > 0 ? '住宅ローン控除を考慮済み。' : ''}ふるさと納税は節税ではなく「返礼品を受け取りながら実質2,000円の負担」。すでに活用していない方はすぐに実施を検討してください。<br>⚠️ 住宅ローン控除の初年度は確定申告が必要なため上限額が変わる場合があります。各サイトのシミュレーターで精密計算することをお勧めします。` });
   }
   if (!idecoOk && age >= 60) {
     advices.push({ type: 'info', icon: 'ℹ️',
@@ -727,7 +808,7 @@ function calculate() {
   document.getElementById('ctaBtns').innerHTML = ctaBtns;
 
   // 将来資産チャートを更新
-  const totalMonthly = idecoMonthRec + nisaMonthRec;   // 万円/月
+  const totalMonthly = idecoMonthRec + nisaMonthRec;   // 万円/月（iDeCo節税再投資分は nisaMonthRec に含まれている）
   const yearsToRetire = Math.max(5, retireAge - age);
   // リスク許容度に応じてシナリオを選択
   const scenarioKey = riskLevel === 'conservative' ? 'bond'
@@ -750,7 +831,15 @@ function calculate() {
       }
     }
   });
-  updateProjectionChart(totalMonthly * 10000, yearsToRetire, existing * 10000);  // 円単位に変換
+  // 退職金・住宅購入・教育費・年金をMonte Carloに渡す
+  updateProjectionChart(
+    totalMonthly * 10000,    // 月積立額（円）
+    yearsToRetire,           // 年数
+    existing * 10000,        // 既存資産（円）
+    retireBonus * 10000,     // 退職金（退職時に一括加算）
+    pension * 10000,         // 年金月額（退職後に月次加算）
+    (housingCost + eduCostPer * kids) * 10000,  // ライフイベント支出合計（現時点で一括控除）
+  );
 
   // 詳細設定サマリー（ライフイベント・退職金など）を追加表示
   const detailHints = [];
@@ -803,7 +892,8 @@ function percentile(sorted, p) {
 }
 
 // 年ごとのパーセンタイル計算（モンテカルロ）
-function runMonteCarlo(monthlyYen, years, mu, sigma, numSims = 500, initialYen = 0) {
+function runMonteCarlo(monthlyYen, years, mu, sigma, numSims = 500, initialYen = 0,
+                       retireBonusYen = 0, pensionMonthYen = 0, lifetimeCostYen = 0) {
   const mMu    = Math.pow(1 + mu, 1 / 12) - 1;
   const mSigma = sigma / Math.sqrt(12);
 
@@ -811,12 +901,16 @@ function runMonteCarlo(monthlyYen, years, mu, sigma, numSims = 500, initialYen =
   const snapshots = Array.from({ length: years + 1 }, () => []);
 
   for (let s = 0; s < numSims; s++) {
-    let val = initialYen;    // 既存残高から開始
+    let val = Math.max(0, initialYen - lifetimeCostYen);  // 既存資産からライフイベント支出を控除
     snapshots[0].push(val);
     for (let yr = 1; yr <= years; yr++) {
       for (let m = 0; m < 12; m++) {
         const r = mMu + mSigma * boxMuller();
-        val = (val + monthlyYen) * (1 + r);
+        const monthlyIncome = monthlyYen + (yr >= years ? pensionMonthYen : 0); // 退職後は年金加算
+        val = (val + monthlyIncome) * (1 + r);
+      }
+      if (yr === years && retireBonusYen > 0) {
+        val += retireBonusYen;  // 退職時に退職金を一括加算
       }
       snapshots[yr].push(val);
     }
@@ -939,7 +1033,8 @@ function switchScenario(key) {
   }
 }
 
-function updateProjectionChart(monthlyYen, years, initialYen = 0) {
+function updateProjectionChart(monthlyYen, years, initialYen = 0,
+                               retireBonusYen = 0, pensionMonthYen = 0, lifetimeCostYen = 0) {
   if ((monthlyYen <= 0 && initialYen <= 0) || years <= 0) {
     document.getElementById('projCard').style.display = 'none';
     return;
@@ -949,7 +1044,10 @@ function updateProjectionChart(monthlyYen, years, initialYen = 0) {
   _projYears = years;
   _projData = {};
   Object.entries(SCENARIOS).forEach(([key, sc]) => {
-    _projData[key] = runMonteCarlo(monthlyYen, years, sc.mu, sc.sigma, 500, initialYen);
+    _projData[key] = runMonteCarlo(
+      monthlyYen, years, sc.mu, sc.sigma, 500,
+      initialYen, retireBonusYen, pensionMonthYen, lifetimeCostYen
+    );
   });
   drawProjectionChart(_projData[_currentScenario], SCENARIOS[_currentScenario].color);
 }
