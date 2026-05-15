@@ -360,7 +360,7 @@
               <span style="width:10px;height:10px;background:#1565c0;border-radius:2px;display:inline-block;"></span>
               オルカン（全世界株式）</label>
             <div class="input-row">
-              <input type="number" id="holdingACWI" min="0" max="5000" value="0" step="10" placeholder="0">
+              <input type="number" id="holdingACWI" min="0" max="5000" value="0" step="10" placeholder="0" oninput="syncHoldingTotal()">
               <span class="unit">万円</span>
             </div>
             <div style="font-size:10px;color:#888;margin-top:2px;">年率+6.0%、標準偏差14.8%</div>
@@ -370,7 +370,7 @@
               <span style="width:10px;height:10px;background:#2e7d32;border-radius:2px;display:inline-block;"></span>
               S&amp;P500</label>
             <div class="input-row">
-              <input type="number" id="holdingSP500" min="0" max="5000" value="0" step="10" placeholder="0">
+              <input type="number" id="holdingSP500" min="0" max="5000" value="0" step="10" placeholder="0" oninput="syncHoldingTotal()">
               <span class="unit">万円</span>
             </div>
             <div style="font-size:10px;color:#888;margin-top:2px;">年率+6.8%、標準偏差16.5%</div>
@@ -380,7 +380,7 @@
               <span style="width:10px;height:10px;background:#880e4f;border-radius:2px;display:inline-block;"></span>
               Nasdaq-100</label>
             <div class="input-row">
-              <input type="number" id="holdingNasdaq" min="0" max="5000" value="0" step="10" placeholder="0">
+              <input type="number" id="holdingNasdaq" min="0" max="5000" value="0" step="10" placeholder="0" oninput="syncHoldingTotal()">
               <span class="unit">万円</span>
             </div>
             <div style="font-size:10px;color:#888;margin-top:2px;">年率+8.5%、標準偏差22.0%</div>
@@ -390,7 +390,7 @@
               <span style="width:10px;height:10px;background:#e65100;border-radius:2px;display:inline-block;"></span>
               日経225（日本株）</label>
             <div class="input-row">
-              <input type="number" id="holdingNikkei" min="0" max="5000" value="0" step="10" placeholder="0">
+              <input type="number" id="holdingNikkei" min="0" max="5000" value="0" step="10" placeholder="0" oninput="syncHoldingTotal()">
               <span class="unit">万円</span>
             </div>
             <div style="font-size:10px;color:#888;margin-top:2px;">年率+4.5%、標準偏差20.0%</div>
@@ -398,7 +398,7 @@
           <div>
             <label style="font-size:12px;color:#666;">現金・預貯金・債券</label>
             <div class="input-row">
-              <input type="number" id="holdingCash" min="0" max="5000" value="0" step="10" placeholder="0">
+              <input type="number" id="holdingCash" min="0" max="5000" value="0" step="10" placeholder="0" oninput="syncHoldingTotal()">
               <span class="unit">万円</span>
             </div>
             <div style="font-size:10px;color:#888;margin-top:2px;">年率+0.5%（インフレ調整なし）</div>
@@ -427,11 +427,18 @@
         <p style="font-size:11px;color:#888;margin:4px 0 0;">例: 企業型DC掛金が41,000円の場合 → 55,000−41,000=14,000円と入力（1.4）</p>
       </div>
       <div class="field">
-        <label>既存のiDeCo・NISA残高 <span class="sub">（上記4項目の合計額を自動参照します）</span></label>
+        <label>既存の投資残高合計
+          <span class="sub">（上の指数別入力から自動計算）</span>
+        </label>
         <div class="input-row">
-          <input type="number" id="existingAssets" min="0" max="5000" value="0" step="10" placeholder="例: 200">
+          <input type="number" id="existingAssets" min="0" max="10000" value="0" step="10"
+            placeholder="指数別に入力すると自動入力"
+            style="background:#f5f3ee;color:#555;" readonly>
           <span class="unit">万円</span>
         </div>
+        <p style="font-size:11px;color:#888;margin:4px 0 0;">
+          指数別に入力すると自動集計されます。指数別入力を使わない場合は直接入力も可能です。
+        </p>
       </div>
       <div class="field">
         <label>目標退職年齢</label>
@@ -1361,6 +1368,46 @@ function syncSlider() {
   if (slider) slider.value = numInput.value;
   const maxInvest = parseFloat(document.getElementById('maxInvestDisplay')?.textContent) || 99;
   checkInvestWarning(parseFloat(numInput.value), maxInvest);
+}
+
+// 保有資産の合計を「既存の投資残高合計」欄に自動コピー
+function syncHoldingTotal() {
+  const acwi   = parseFloat(document.getElementById('holdingACWI')?.value)   || 0;
+  const sp500  = parseFloat(document.getElementById('holdingSP500')?.value)  || 0;
+  const nasdaq = parseFloat(document.getElementById('holdingNasdaq')?.value) || 0;
+  const nikkei = parseFloat(document.getElementById('holdingNikkei')?.value) || 0;
+  const cash   = parseFloat(document.getElementById('holdingCash')?.value)   || 0;
+  const total  = acwi + sp500 + nasdaq + nikkei + cash;
+
+  const existingEl = document.getElementById('existingAssets');
+  if (existingEl) {
+    if (total > 0) {
+      existingEl.value = total;
+      existingEl.readOnly = true;
+      existingEl.style.background = '#f0f6ff';
+      existingEl.style.color = '#1565c0';
+    } else {
+      // 指数別入力が全て0なら手動入力可能にする
+      existingEl.readOnly = false;
+      existingEl.style.background = '';
+      existingEl.style.color = '';
+    }
+  }
+
+  // 合計表示バナーの更新
+  const htEl = document.getElementById('holdingTotal');
+  if (htEl) {
+    if (total > 0) {
+      htEl.style.display = '';
+      const avgReturn = total > 0
+        ? (acwi*0.060 + sp500*0.068 + nasdaq*0.085 + nikkei*0.045 + cash*0.005) / total * 100
+        : 0;
+      document.getElementById('holdingTotalAmt').textContent = Math.round(total);
+      document.getElementById('holdingAvgReturn').textContent = Math.round(avgReturn * 10) / 10;
+    } else {
+      htEl.style.display = 'none';
+    }
+  }
 }
 
 // 初期化
