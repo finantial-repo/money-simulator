@@ -8,96 +8,157 @@
     *{box-sizing:border-box;margin:0;padding:0}
     body{font-family:'Noto Sans JP','Hiragino Sans',sans-serif;background:#f5f5f0;color:#2c2c2c;min-height:100vh;}
     .wrap{max-width:680px;margin:0 auto;padding:20px 16px 60px;}
-    .header{background:#1a1a2e;border-radius:12px;padding:20px 22px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;}
+    .header{background:#1a1a2e;border-radius:12px;padding:18px 22px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
     .header a{color:#e8d5a0;font-size:14px;font-weight:700;text-decoration:none;}
-    .header span{color:#aab8cc;font-size:12px;}
-    h1{font-size:22px;font-weight:800;color:#1a1a2e;margin-bottom:6px;line-height:1.4;}
-    .subtitle{font-size:13px;color:#666;margin-bottom:20px;line-height:1.7;}
+    .header span{color:#aab8cc;font-size:11px;}
+    h1{font-size:22px;font-weight:800;color:#1a1a2e;margin-bottom:8px;line-height:1.4;}
+    .subtitle{font-size:13px;color:#666;margin-bottom:8px;line-height:1.7;}
+    .how-to{background:#eef4fb;border-left:5px solid #1565c0;border-radius:0 8px 8px 0;padding:14px 16px;margin-bottom:20px;}
+    .how-to p{font-size:13px;color:#444;margin:0;line-height:1.8;}
+    .how-to ol{font-size:13px;color:#444;padding-left:18px;margin:6px 0 0;line-height:2;}
     .card{background:#fff;border-radius:12px;padding:20px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,.06);}
-    .card-title{font-size:13px;font-weight:700;color:#b8860b;letter-spacing:2px;margin-bottom:14px;}
+    .card-title{font-size:12px;font-weight:700;color:#b8860b;letter-spacing:2px;margin-bottom:14px;}
     label{font-size:13px;font-weight:600;color:#1a1a2e;display:block;margin-bottom:6px;}
-    input[type=range]{width:100%;accent-color:#1a1a2e;margin:4px 0 2px;}
-    .val-display{font-size:20px;font-weight:800;color:#1a1a2e;text-align:center;margin-bottom:6px;}
-    .val-sub{font-size:11px;color:#888;text-align:center;margin-bottom:14px;}
-    select,input[type=number]{width:100%;padding:10px 12px;border:1.5px solid #ddd;border-radius:8px;font-size:14px;margin-bottom:12px;}
-    select:focus,input[type=number]:focus{outline:none;border-color:#1a1a2e;}
-    .radio-group{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;}
-    .radio-btn{padding:7px 14px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;border:2px solid #ddd;background:#fff;color:#666;transition:all .2s;}
+    label .hint{font-size:11px;color:#888;font-weight:400;margin-left:6px;}
+    input[type=range]{width:100%;accent-color:#1a1a2e;margin:4px 0 2px;cursor:pointer;}
+    .val-display{font-size:24px;font-weight:800;color:#1a1a2e;text-align:center;margin-bottom:4px;}
+    .val-range{display:flex;justify-content:space-between;font-size:10px;color:#aaa;margin-bottom:14px;}
+    select{width:100%;padding:10px 12px;border:1.5px solid #ddd;border-radius:8px;font-size:14px;margin-bottom:14px;cursor:pointer;}
+    select:focus{outline:none;border-color:#1a1a2e;}
+    .radio-group{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+    .radio-btn{padding:8px 14px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;border:2px solid #ddd;background:#fff;color:#666;transition:all .2s;}
     .radio-btn.active{border-color:#1a1a2e;background:#1a1a2e;color:#fff;}
-    .btn-calc{display:block;width:100%;background:linear-gradient(135deg,#1a1a2e,#2d3a6e);color:#fff;font-size:16px;font-weight:700;padding:16px;border:none;border-radius:10px;cursor:pointer;margin-top:8px;}
+    .btn-calc{display:block;width:100%;background:linear-gradient(135deg,#1a1a2e,#2d3a6e);color:#fff;font-size:16px;font-weight:700;padding:16px;border:none;border-radius:10px;cursor:pointer;margin-top:4px;letter-spacing:.05em;}
+    .btn-calc:hover{opacity:.9;}
     #resultCard{display:none;}
-    .alloc-bar{display:flex;border-radius:8px;overflow:hidden;height:36px;margin:14px 0;}
-    .alloc-seg{display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;transition:width .5s ease;}
-    .alloc-table{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:14px;}
-    .alloc-table th{background:#f5f5f0;padding:8px 12px;text-align:left;font-weight:700;color:#555;}
-    .alloc-table td{padding:8px 12px;border-bottom:1px solid #f0f0f0;}
-    .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;}
-    .insight-box{background:#fdf8ed;border:1px solid #e0d0a0;border-radius:8px;padding:14px 16px;margin-top:10px;}
-    .insight-box p{font-size:13px;color:#444;line-height:1.8;margin:0;}
-    .note{font-size:11px;color:#aaa;margin-top:12px;line-height:1.6;}
-    .back-link{display:block;text-align:center;margin-top:20px;color:#888;font-size:13px;text-decoration:none;}
-    .inflation-note{background:#fff3e0;border-left:4px solid #e65100;border-radius:0 8px 8px 0;padding:12px 14px;margin-bottom:14px;font-size:12px;color:#555;line-height:1.7;}
+    .alloc-label{font-size:12px;color:#666;margin-bottom:8px;}
+    .alloc-bar{display:flex;border-radius:8px;overflow:hidden;height:44px;margin:8px 0 16px;}
+    .alloc-seg{display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;transition:width .6s ease;}
+    table{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:16px;}
+    th{background:#f5f5f0;padding:8px 12px;text-align:left;font-weight:700;color:#555;font-size:12px;}
+    td{padding:10px 12px;border-bottom:1px solid #f0f0f0;}
+    .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:middle;}
+    .insight-box{background:#fdf8ed;border:1px solid #e0d0a0;border-radius:8px;padding:16px;margin-top:4px;}
+    .insight-box p{font-size:13px;color:#444;line-height:1.9;margin-bottom:6px;}
+    .insight-box p:last-child{margin-bottom:0;}
+    .inflation-badge{display:inline-block;background:#e65100;color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;margin-bottom:8px;}
+    .note{font-size:11px;color:#aaa;margin-top:12px;line-height:1.7;border-top:1px solid #f0f0f0;padding-top:12px;}
+    .back-section{text-align:center;margin-top:20px;padding:20px;background:#1a1a2e;border-radius:12px;}
+    .back-section a{display:inline-block;color:#e8a020;font-size:14px;font-weight:700;text-decoration:none;}
+    .back-section p{font-size:11px;color:#aab8cc;margin-top:8px;}
   </style>
 </head>
 <body>
 <div class="wrap">
+
   <div class="header">
     <a href="https://moneykyoshitsu.com/">← マネー教室</a>
-    <span>年齢別 最適資産配分</span>
+    <span>資産配分 診断ツール</span>
   </div>
 
   <h1>📊 年齢別・最適資産配分シミュレーター</h1>
-  <p class="subtitle">過去100年のインフレ率と市場データをもとに、あなたの年齢・状況に最適な株式・債券・現金の配分比率を算出します。</p>
+  <p class="subtitle">過去100年のインフレ率・市場リターンデータをもとに、あなたの年齢と状況に最適な「株式・債券・現金」の比率を診断します。</p>
+
+  <div class="how-to">
+    <p><strong>使い方（3ステップ）</strong></p>
+    <ol>
+      <li>スライダーで<strong>現在の年齢</strong>を選ぶ</li>
+      <li>リスク許容度など<strong>3つの質問</strong>に答える</li>
+      <li>「診断する」ボタンを押すと<strong>最適な配分比率</strong>が表示される</li>
+    </ol>
+  </div>
+
+  <!-- 入力カード -->
+  <div class="card">
+    <div class="card-title">STEP 1 — あなたの年齢</div>
+
+    <label>現在の年齢 <span class="hint">→ 年齢が上がるほど安定資産の比率が増えます</span></label>
+    <div class="val-display" id="ageDisplay">30歳</div>
+    <input type="range" id="ageSlider" min="18" max="75" value="30"
+           oninput="updateAge(this.value)" aria-label="年齢">
+    <div class="val-range"><span>18歳</span><span>50歳</span><span>75歳</span></div>
+  </div>
 
   <div class="card">
-    <div class="card-title">STEP 1 — 基本情報</div>
+    <div class="card-title">STEP 2 — あなたの状況</div>
 
-    <label>現在の年齢</label>
-    <div class="val-display" id="ageDisplay">30歳</div>
-    <input type="range" id="ageSlider" min="18" max="75" value="30" oninput="updateAge(this.value)">
-    <div style="display:flex;justify-content:space-between;font-size:10px;color:#aaa;margin-bottom:14px;">
-      <span>18歳</span><span>75歳</span>
-    </div>
-
-    <label>退職予定年齢</label>
-    <select id="retireAge">
-      <option value="55">55歳（早期退職）</option>
-      <option value="60">60歳（定年前退職）</option>
+    <label>退職・引退を考えている年齢 <span class="hint">→ 退職が近いほど安全性を重視</span></label>
+    <select id="retireAge" aria-label="退職年齢">
+      <option value="55">55歳（FIRE・早期退職を目指している）</option>
+      <option value="60">60歳（会社の定年より早め）</option>
       <option value="65" selected>65歳（一般的な定年）</option>
-      <option value="70">70歳（継続勤務）</option>
+      <option value="70">70歳（70歳まで働く予定）</option>
     </select>
 
-    <label>リスク許容度</label>
+    <label>投資でどの程度のリスクなら許容できますか？ <span class="hint">→ 暴落時の反応を想像してください</span></label>
     <div class="radio-group">
-      <button class="radio-btn" id="risk-low" onclick="setRisk('low')">安定重視</button>
-      <button class="radio-btn active" id="risk-mid" onclick="setRisk('mid')">バランス型</button>
-      <button class="radio-btn" id="risk-high" onclick="setRisk('high')">成長重視</button>
+      <button class="radio-btn" id="risk-low" onclick="setRisk('low')" type="button">
+        😌 安定重視<br><span style="font-size:10px;font-weight:400;">多少減っても気にしない</span>
+      </button>
+      <button class="radio-btn active" id="risk-mid" onclick="setRisk('mid')" type="button">
+        ⚖️ バランス型<br><span style="font-size:10px;font-weight:400;">多少の変動は受け入れる</span>
+      </button>
+      <button class="radio-btn" id="risk-high" onclick="setRisk('high')" type="button">
+        🚀 成長重視<br><span style="font-size:10px;font-weight:400;">大きなリターンを狙う</span>
+      </button>
     </div>
 
-    <label>現在の資産規模（任意）</label>
+    <label>現在の金融資産の規模（目安）</label>
     <div class="radio-group">
-      <button class="radio-btn active" id="asset-s" onclick="setAsset('s')">〜500万円</button>
-      <button class="radio-btn" id="asset-m" onclick="setAsset('m')">500〜2,000万円</button>
-      <button class="radio-btn" id="asset-l" onclick="setAsset('l')">2,000万円〜</button>
+      <button class="radio-btn active" id="asset-s" onclick="setAsset('s')" type="button">〜500万円</button>
+      <button class="radio-btn" id="asset-m" onclick="setAsset('m')" type="button">500〜2,000万円</button>
+      <button class="radio-btn" id="asset-l" onclick="setAsset('l')" type="button">2,000万円以上</button>
     </div>
 
-    <button class="btn-calc" onclick="calculate()">💡 最適配分を診断する</button>
+    <button class="btn-calc" type="button" onclick="calculate()">
+      💡 最適な配分を診断する
+    </button>
   </div>
 
+  <!-- 結果カード -->
   <div class="card" id="resultCard">
-    <div class="card-title">診断結果</div>
+    <div class="card-title">📋 診断結果</div>
+
+    <p class="alloc-label" id="allocSubtitle"></p>
     <div class="alloc-bar" id="allocBar"></div>
-    <table class="alloc-table" id="allocTable"></table>
-    <div class="inflation-note" id="inflationNote"></div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>資産クラス</th>
+          <th>推奨比率</th>
+          <th>具体的な選択肢</th>
+        </tr>
+      </thead>
+      <tbody id="allocTableBody"></tbody>
+    </table>
+
+    <div style="margin-bottom:12px;">
+      <span class="inflation-badge">📈 インフレ調整済み</span>
+    </div>
+
     <div class="insight-box" id="insightBox"></div>
-    <p class="note">※ 過去100年のインフレ率・市場リターンデータ（Dimson-Marsh-Staunton、Damodaran統計）を参考に算出。あくまで参考値です。最終的な投資判断はご自身でお願いします。</p>
+
+    <p class="note">
+      ※ 過去100年のインフレ率・市場リターンデータ（Dimson-Marsh-Staunton統計、Damodaranデータベース）を参考に算出。
+      「修正版ルール・オブ・110（インフレ調整）」を採用。あくまで参考値です。<br>
+      ※ 個人の状況（家族構成・負債・収入安定性など）により最適解は変わります。重要な決断の前には専門家にご相談ください。
+    </p>
   </div>
 
-  <a class="back-link" href="https://moneykyoshitsu.com/simulator/">より詳細な将来資産シミュレーション →</a>
+  <div class="back-section">
+    <a href="https://moneykyoshitsu.com/simulator/">より詳細な将来資産シミュレーション →</a>
+    <p>月収・支出・iDeCo・NISAを入力して30年後の資産を計算（比較機能付き）</p>
+  </div>
+
 </div>
 
 <script>
-let _risk = 'mid', _asset = 's';
+// ────────────────────────────────
+// 状態管理
+// ────────────────────────────────
+var _risk = 'mid';
+var _asset = 's';
 
 function updateAge(v) {
   document.getElementById('ageDisplay').textContent = v + '歳';
@@ -105,109 +166,139 @@ function updateAge(v) {
 
 function setRisk(r) {
   _risk = r;
-  ['low','mid','high'].forEach(k => {
-    document.getElementById('risk-'+k).classList.toggle('active', k === r);
+  ['low', 'mid', 'high'].forEach(function(k) {
+    var btn = document.getElementById('risk-' + k);
+    if (btn) btn.className = 'radio-btn' + (k === r ? ' active' : '');
   });
 }
 
 function setAsset(a) {
   _asset = a;
-  ['s','m','l'].forEach(k => {
-    document.getElementById('asset-'+k).classList.toggle('active', k === a);
+  ['s', 'm', 'l'].forEach(function(k) {
+    var btn = document.getElementById('asset-' + k);
+    if (btn) btn.className = 'radio-btn' + (k === a ? ' active' : '');
   });
 }
 
-// ────────────────────────────────────────────
-// コアロジック：年齢・リスク・インフレ実績から配分を計算
-// 基礎: 「100 - 年齢 = 株式比率」（ルール・オブ・100）を拡張
-// インフレ時代（2%+）補正: 現金比率を下げ、株式比率を引き上げ
-// ────────────────────────────────────────────
+// ────────────────────────────────
+// 計算ロジック
+// インフレ調整版「修正ルール・オブ・110」
+// 従来の「100 - 年齢 = 株式%」を
+// インフレ2%+ 環境に合わせて+10%引き上げ
+// ────────────────────────────────
 function calculate() {
-  const age       = parseInt(document.getElementById('ageSlider').value);
-  const retireAge = parseInt(document.getElementById('retireAge').value);
-  const yearsLeft = Math.max(1, retireAge - age);
+  var age = parseInt(document.getElementById('ageSlider').value, 10);
+  var retireAge = parseInt(document.getElementById('retireAge').value, 10);
+  var yearsLeft = Math.max(1, retireAge - age);
 
-  // ベース株式比率（修正版ルール・オブ・110）
-  // インフレ2%+ 環境: 株式を増やして実質リターンを確保
-  let baseStock = 110 - age; // インフレ調整済み（旧来の100から+10%）
+  // ベース株式比率
+  var baseStock = 110 - age;
 
-  // リスク許容度補正
-  const riskAdj = { low: -15, mid: 0, high: +15 };
-  baseStock += riskAdj[_risk];
+  // リスク補正
+  var riskAdj = { low: -15, mid: 0, high: 15 };
+  baseStock += (riskAdj[_risk] || 0);
 
-  // 資産規模補正（大きいほど分散しやすい）
-  const assetAdj = { s: -5, m: 0, l: +5 };
-  baseStock += assetAdj[_asset];
+  // 資産規模補正
+  var assetAdj = { s: -5, m: 0, l: 5 };
+  baseStock += (assetAdj[_asset] || 0);
 
-  // 残り投資期間補正
-  if (yearsLeft < 5)  baseStock -= 20;
-  else if (yearsLeft < 10) baseStock -= 10;
-
-  // 上下限
-  baseStock = Math.max(10, Math.min(90, baseStock));
-
-  // 債券・現金の配分
-  let bond, cash;
-  if (baseStock >= 70) {
-    bond = Math.round((100 - baseStock) * 0.6);
-    cash = 100 - baseStock - bond;
-  } else if (baseStock >= 40) {
-    bond = Math.round((100 - baseStock) * 0.5);
-    cash = 100 - baseStock - bond;
-  } else {
-    bond = Math.round((100 - baseStock) * 0.4);
-    cash = 100 - baseStock - bond;
+  // 残り期間補正
+  if (yearsLeft < 5) {
+    baseStock -= 20;
+  } else if (yearsLeft < 10) {
+    baseStock -= 10;
   }
 
-  // 端数調整
-  const total = baseStock + bond + cash;
-  if (total !== 100) cash += (100 - total);
+  // クランプ
+  baseStock = Math.max(10, Math.min(90, baseStock));
+  baseStock = Math.round(baseStock);
 
-  // 期待リターン（インフレ後実質）
-  const expReturn = (baseStock/100 * 5.0 + bond/100 * 1.5 + cash/100 * 0.1).toFixed(1);
+  // 債券・現金配分
+  var remaining = 100 - baseStock;
+  var bond, cash;
+  if (baseStock >= 70) {
+    bond = Math.round(remaining * 0.6);
+  } else if (baseStock >= 40) {
+    bond = Math.round(remaining * 0.5);
+  } else {
+    bond = Math.round(remaining * 0.4);
+  }
+  cash = remaining - bond;
 
-  // 表示
-  const bar = document.getElementById('allocBar');
+  // 期待年率リターン（税前・名目）
+  var expReturn = (baseStock / 100 * 5.5 + bond / 100 * 1.5 + cash / 100 * 0.1).toFixed(1);
+
+  // ──── 表示 ────
+  // サブタイトル
+  var riskLabel = { low: '安定重視', mid: 'バランス型', high: '成長重視' }[_risk];
+  var assetLabel = { s: '〜500万円', m: '500〜2,000万円', l: '2,000万円〜' }[_asset];
+  document.getElementById('allocSubtitle').textContent =
+    age + '歳 / ' + riskLabel + ' / 資産' + assetLabel + ' / 退職' + retireAge + '歳 → 推奨配分';
+
+  // カラーバー
+  var colors = { stock: '#1565c0', bond: '#2e7d32', cash: '#795548' };
+  var bar = document.getElementById('allocBar');
   bar.innerHTML = [
-    `<div class="alloc-seg" style="width:${baseStock}%;background:#1565c0;">${baseStock}%</div>`,
-    `<div class="alloc-seg" style="width:${bond}%;background:#2e7d32;">${bond}%</div>`,
-    `<div class="alloc-seg" style="width:${cash}%;background:#795548;">${cash}%</div>`,
+    '<div class="alloc-seg" style="width:' + baseStock + '%;background:' + colors.stock + ';">' + baseStock + '% 株式</div>',
+    '<div class="alloc-seg" style="width:' + bond + '%;background:' + colors.bond + ';">' + bond + '% 債券</div>',
+    '<div class="alloc-seg" style="width:' + cash + '%;background:' + colors.cash + ';">' + cash + '% 現金</div>'
   ].join('');
 
   // テーブル
-  const rows = [
-    ['#1565c0', '株式インデックス', baseStock, '全世界株（オルカン）・S&P500・日経225など'],
-    ['#2e7d32', '債券・REIT',        bond,      '国内外債券・個人向け国債（変動10年）・REIT'],
-    ['#795548', '現金・生活防衛資金', cash,      '普通預金・定期預金（生活費6ヶ月分相当）'],
+  var rows = [
+    [colors.stock, '株式インデックス', baseStock + '%',
+     'eMAXIS Slim 全世界株式（オルカン）<br>eMAXIS Slim S&P500<br>※NISAつみたて投資枠で積立推奨'],
+    [colors.bond, '債券・REIT',        bond + '%',
+     '個人向け国債（変動10年）<br>国内・外国債券インデックス<br>J-REIT（不動産投資信託）'],
+    [colors.cash, '現金・預金',        cash + '%',
+     '普通預金・高金利定期預金<br>（生活費6ヶ月分は必ず確保する）'],
   ];
-  document.getElementById('allocTable').innerHTML =
-    '<tr><th>資産クラス</th><th>比率</th><th>具体例</th></tr>' +
-    rows.map(([col, name, pct, ex]) =>
-      `<tr><td><span class="dot" style="background:${col}"></span>${name}</td><td style="font-weight:700;">${pct}%</td><td style="color:#888;font-size:11px;">${ex}</td></tr>`
-    ).join('');
-
-  // インフレ注記
-  document.getElementById('inflationNote').innerHTML =
-    `<strong style="color:#e65100;">📈 インフレ時代の調整点：</strong>` +
-    `過去30年（1994-2024）の日本のインフレ平均は約0.5%でしたが、` +
-    `2022年以降は年率2-3%に上昇。インフレ2%が続くと10年で現金の実質価値は${Math.round((1-0.02**10)*100*82/100)}万円相当に目減りします。` +
-    `このため株式比率を従来より<strong>+10%程度高め</strong>に設定しています。`;
+  var tbody = document.getElementById('allocTableBody');
+  tbody.innerHTML = rows.map(function(r) {
+    return '<tr>'
+      + '<td><span class="dot" style="background:' + r[0] + '"></span>' + r[1] + '</td>'
+      + '<td style="font-weight:700;font-size:16px;">' + r[2] + '</td>'
+      + '<td style="font-size:11px;color:#666;line-height:1.6;">' + r[3] + '</td>'
+      + '</tr>';
+  }).join('');
 
   // インサイト
-  const insights = [];
-  if (baseStock >= 70) insights.push(`${age}歳で退職まで${yearsLeft}年。時間を味方にして積極的に株式で運用し、インフレに対抗できます。`);
-  else if (baseStock >= 40) insights.push(`退職まで${yearsLeft}年。株式と債券のバランスで安定リターンを狙う時期です。`);
-  else insights.push(`退職が近い（${yearsLeft}年以内）ため、元本保護を優先しています。株式比率を徐々に下げることをお勧めします。`);
+  var insights = [];
 
-  if (_risk === 'low') insights.push('安定重視の方は、株式の中でも「全世界株式インデックス」など分散型を選ぶと価格変動を抑えられます。');
-  if (_risk === 'high') insights.push('成長重視でもNISAのつみたて投資枠（年120万円）で積み立てることで税金ゼロで複利を活かせます。');
-  if (age < 30) insights.push('20代は最大の武器は「時間」。月3万円を30年積み立てるだけで（年率5%の場合）約2,500万円に育ちます。');
-  insights.push(`期待実質リターン（インフレ後）：年率約${expReturn}%（この配分の場合の目安値）`);
+  // 年齢別コメント
+  if (age <= 22) {
+    insights.push('🎓 <strong>学生・社会人1年目</strong>：投資を始めるタイミングとしては最高です。少額（月3,000円〜）でよいので今すぐNISAで積立を始めましょう。時間が一番の武器です。');
+  } else if (age <= 30) {
+    insights.push('🌱 <strong>20代</strong>：長期投資のゴールデンタイム。株式比率を高めにして成長を狙う時期。生活防衛資金（月収×6ヶ月）だけ現金で残し、あとはNISAで積立を。');
+  } else if (age <= 45) {
+    insights.push('💼 <strong>30〜40代</strong>：収入も増え、投資の「仕込み」時期。iDeCoで節税しながらNISAを最大活用。子育て費用や住宅ローンとのバランスを考えながら。');
+  } else if (age <= 55) {
+    insights.push('⚖️ <strong>50代前半</strong>：退職まで10〜15年。徐々に債券・現金比率を増やし、暴落時のダメージを抑える設計に。iDeCoの受け取り方（一時金 vs 年金）も検討を。');
+  } else {
+    insights.push('🏖️ <strong>50代後半〜</strong>：元本保護を優先する時期。株式は持ちつつも大きなリスクは避け、安定的な収益源（配当・利息）を重視した配分に。');
+  }
 
-  document.getElementById('insightBox').innerHTML = insights.map(i => `<p style="margin-bottom:6px;">・${i}</p>`).join('');
+  // インフレ注記
+  insights.push('📈 <strong>インフレ調整について</strong>：2022年以降、日本の物価は年率2〜3%で上昇中。従来の「100-年齢」ルールより株式を10%多めに設定し、インフレによる実質目減りに対応しています。現金のみ保有の場合、10年で約18%の実質価値が失われます。');
 
-  document.getElementById('resultCard').style.display = '';
-  document.getElementById('resultCard').scrollIntoView({behavior:'smooth',block:'start'});
+  // 期待リターン
+  insights.push('💡 <strong>この配分の期待年率リターン（目安）</strong>：約 <strong>' + expReturn + '%（名目）</strong>。インフレ2%を差し引いた実質リターンは約 ' + (parseFloat(expReturn) - 2.0).toFixed(1) + '%。');
+
+  if (baseStock >= 60) {
+    insights.push('📌 <strong>NISAの活用</strong>：株式比率が高いこの配分は、NISAのつみたて投資枠（年120万円）での積立投資が最適です。インデックスファンドに月10万円を積み立てると、30年で複利効果が最大化されます。');
+  }
+
+  var box = document.getElementById('insightBox');
+  box.innerHTML = insights.map(function(i) {
+    return '<p>' + i + '</p>';
+  }).join('');
+
+  // 結果を表示してスクロール
+  var card = document.getElementById('resultCard');
+  card.style.display = '';
+  setTimeout(function() {
+    card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 100);
 }
 </script>
 </body>
