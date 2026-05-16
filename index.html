@@ -1004,30 +1004,46 @@ function calculate() {
     `<li class="${a.type}" data-icon="${a.icon}">${a.text}</li>`
   ).join('');
 
-  // --- CTA ---
-  let ctaDesc = '';
-  let ctaBtns = '';
+  // --- CTA: 診断結果に基づいて次の記事へ誘導 ---
+  const BLOG = 'https://moneykyoshitsu.com';
 
-  if (idecoOk && emp !== 'self') {
-    ctaDesc = `年間 ${Math.round(idecoSaving * 10) / 10}万円の節税を今すぐ始められます。まずは口座開設（無料）を。`;
+  let ctaTitle = '診断完了！次のステップを選んでください';
+  let ctaDesc  = '';
+  let ctaBtns  = '';
+
+  // 余剰資金が少ない → 生活防衛資金を先に
+  if (freeActual < 3) {
+    ctaDesc = `月の投資可能額が${Math.round(freeActual*10)/10}万円と少ない状態です。投資の前にまず生活防衛資金（月の生活費×3〜6ヶ月）の確保を優先しましょう。`;
     ctaBtns = `
-      <a href="https://moneykyoshitsu.com/ideco-myth-debunked/" class="cta-btn" target="_blank">SBI証券でiDeCo口座を開設する</a>
-      <a href="https://moneykyoshitsu.com/new-nisa-explained/" class="cta-btn secondary" target="_blank">NISAについて詳しく読む</a>
+      <a href="${BLOG}/keep-cash-invest-efficiently/" class="cta-btn">🛡 生活防衛資金と投資の黄金比を読む</a>
+      <a href="${BLOG}/cash-inflation-risk/" class="cta-btn secondary">📖 現金保有リスクを理解する</a>
     `;
-  } else if (emp === 'self') {
-    ctaDesc = '自営業の方のiDeCo節税効果は特に大きいです。';
+  // iDeCo節税効果が大きい → iDeCo優先
+  } else if (idecoOk && idecoSaving > 3) {
+    ctaDesc = `年間 ${Math.round(idecoSaving * 10) / 10}万円の節税効果があります。iDeCoを優先活用してから、残りをNISAへ回すのが最も有利です。`;
     ctaBtns = `
-      <a href="https://moneykyoshitsu.com/ideco-myth-debunked/" class="cta-btn" target="_blank">iDeCo詳細記事を読む</a>
-      <a href="https://moneykyoshitsu.com/new-nisa-explained/" class="cta-btn secondary" target="_blank">NISAについて読む</a>
+      <a href="${BLOG}/ideco-myth-debunked/" class="cta-btn">📊 iDeCoを深く理解する記事を読む</a>
+      <a href="${BLOG}/securities-account-comparison/" class="cta-btn secondary">🏦 証券口座4社を比較する</a>
     `;
+  // NISA優先
   } else {
-    ctaDesc = 'NISAを使って非課税で資産を増やしましょう。';
+    ctaDesc = `月${Math.round(nisaMonthRec*10)/10}万円をNISAつみたて投資枠で全世界株式インデックスに積み立てると、${Math.round(yearsToRetire)}年後に大きな資産になります。`;
     ctaBtns = `
-      <a href="https://moneykyoshitsu.com/new-nisa-explained/" class="cta-btn" target="_blank">新NISAを詳しく読む</a>
+      <a href="${BLOG}/new-nisa-explained/" class="cta-btn">📈 新NISAの仕組みを完全理解する</a>
+      <a href="${BLOG}/securities-account-comparison/" class="cta-btn secondary">🏦 どの証券口座で始めるか比較する</a>
     `;
   }
-  document.getElementById('ctaDesc').textContent = ctaDesc;
-  document.getElementById('ctaBtns').innerHTML = ctaBtns;
+
+  // 共通：サイトに戻るリンク
+  ctaBtns += `<div style="margin-top:12px;text-align:center;">
+    <a href="${BLOG}/" style="font-size:13px;color:#888;text-decoration:none;border-bottom:1px solid #ccc;">
+      ← マネー教室トップに戻る
+    </a>
+  </div>`;
+
+  document.getElementById('ctaTitle').textContent = ctaTitle;
+  document.getElementById('ctaDesc').textContent  = ctaDesc;
+  document.getElementById('ctaBtns').innerHTML    = ctaBtns;
 
   // ============================================================
   // 将来資産・退職後計算に必要な変数（先に定義）
