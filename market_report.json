@@ -1,0 +1,262 @@
+{
+  "timestamp": "2026-05-16 17:26:28",
+  "prices": {
+    "SP500": {
+      "price": 7408.5,
+      "chg_1w": 0.1,
+      "chg_1m": 5.2,
+      "chg_3m": 6.7,
+      "chg_6m": 11.0,
+      "vol": 13.3
+    },
+    "Nikkei": {
+      "price": 61409.29,
+      "chg_1w": -2.1,
+      "chg_1m": 7.9,
+      "chg_3m": 13.1,
+      "chg_6m": 22.0,
+      "vol": 28.9
+    },
+    "DAX": {
+      "price": 23950.57,
+      "chg_1w": -1.6,
+      "chg_1m": -0.5,
+      "chg_3m": -4.2,
+      "chg_6m": 1.5,
+      "vol": 18.3
+    },
+    "Nasdaq": {
+      "price": 26225.14,
+      "chg_1w": -0.1,
+      "chg_1m": 8.8,
+      "chg_3m": 13.7,
+      "chg_6m": 15.5,
+      "vol": 17.9
+    },
+    "US10Y": {
+      "price": 4.59,
+      "chg_1w": 5.3,
+      "chg_1m": 6.6,
+      "chg_3m": 10.1,
+      "chg_6m": 11.2,
+      "vol": 15.0
+    },
+    "VIX": {
+      "price": 18.43,
+      "chg_1w": 7.2,
+      "chg_1m": 2.7,
+      "chg_3m": 4.4,
+      "chg_6m": -17.6,
+      "vol": 122.3
+    },
+    "Gold": {
+      "price": 4555.8,
+      "chg_1w": -3.5,
+      "chg_1m": -4.8,
+      "chg_3m": -10.2,
+      "chg_6m": 12.0,
+      "vol": 32.5
+    },
+    "Silver": {
+      "price": 77.16,
+      "chg_1w": -4.0,
+      "chg_1m": -1.8,
+      "chg_3m": -7.9,
+      "chg_6m": 52.4,
+      "vol": 84.4
+    },
+    "Oil": {
+      "price": 105.42,
+      "chg_1w": 10.5,
+      "chg_1m": 11.3,
+      "chg_3m": 63.1,
+      "chg_6m": 76.0,
+      "vol": 63.0
+    },
+    "DXY": {
+      "price": 99.27,
+      "chg_1w": 1.5,
+      "chg_1m": 1.1,
+      "chg_3m": 2.5,
+      "chg_6m": -0.3,
+      "vol": 5.7
+    },
+    "USDJPY": {
+      "price": 158.73,
+      "chg_1w": 1.2,
+      "chg_1m": -0.0,
+      "chg_3m": 3.9,
+      "chg_6m": 2.7,
+      "vol": 8.3
+    },
+    "Bitcoin": {
+      "price": 78351.42,
+      "chg_1w": -4.1,
+      "chg_1m": 1.0,
+      "chg_3m": 11.1,
+      "chg_6m": -16.8,
+      "vol": 40.9
+    },
+    "Ethereum": {
+      "price": 2193.8,
+      "chg_1w": -6.2,
+      "chg_1m": -5.4,
+      "chg_3m": 5.8,
+      "chg_6m": -29.1,
+      "vol": 54.9
+    },
+    "TLT": {
+      "price": 83.66,
+      "chg_1w": -2.8,
+      "chg_1m": -2.7,
+      "chg_3m": -3.9,
+      "chg_6m": -4.0,
+      "vol": 9.3
+    },
+    "HYG": {
+      "price": 79.46,
+      "chg_1w": -0.8,
+      "chg_1m": -0.6,
+      "chg_3m": -0.2,
+      "chg_6m": 2.2,
+      "vol": 4.2
+    },
+    "GLD": {
+      "price": 417.29,
+      "chg_1w": -3.8,
+      "chg_1m": -5.2,
+      "chg_3m": -10.8,
+      "chg_6m": 12.3,
+      "vol": 32.5
+    }
+  },
+  "technical": {
+    "SP500": {
+      "rsi": 67.1,
+      "macd": 5.54,
+      "bb_pos": 0.77,
+      "golden_cross": null,
+      "rsi_signal": "中立",
+      "macd_signal": "上昇"
+    },
+    "Nikkei": {
+      "rsi": 59.1,
+      "macd": 50.04,
+      "bb_pos": 0.64,
+      "golden_cross": null,
+      "rsi_signal": "中立",
+      "macd_signal": "上昇"
+    },
+    "Gold": {
+      "rsi": 41.0,
+      "macd": 2.42,
+      "bb_pos": 0.15,
+      "golden_cross": null,
+      "rsi_signal": "中立",
+      "macd_signal": "上昇"
+    },
+    "Bitcoin": {
+      "rsi": 49.6,
+      "macd": -425.85,
+      "bb_pos": 0.37,
+      "golden_cross": null,
+      "rsi_signal": "中立",
+      "macd_signal": "下降"
+    },
+    "Nasdaq": {
+      "rsi": 69.8,
+      "macd": 39.12,
+      "bb_pos": 0.79,
+      "golden_cross": null,
+      "rsi_signal": "中立",
+      "macd_signal": "上昇"
+    }
+  },
+  "economic": {
+    "UNRATE": {
+      "label": "失業率(%)",
+      "value": 4.3,
+      "date": "2026-04-01",
+      "chg": 0.0
+    },
+    "CPIAUCSL": {
+      "label": "CPI",
+      "value": 332.407,
+      "date": "2026-04-01",
+      "chg": 2.114
+    },
+    "FEDFUNDS": {
+      "label": "政策金利(FF)",
+      "value": 3.64,
+      "date": "2026-04-01",
+      "chg": 0.0
+    },
+    "T10Y2Y": {
+      "label": "逆イールド(10Y-2Y)",
+      "value": 0.5,
+      "date": "2026-05-15",
+      "chg": 0.03
+    },
+    "T10YIE": {
+      "label": "インフレ期待(BEI)",
+      "value": 2.49,
+      "date": "2026-05-15",
+      "chg": 0.02
+    },
+    "BAMLH0A0HYM2": {
+      "label": "HYスプレッド",
+      "value": 2.76,
+      "date": "2026-05-14",
+      "chg": -0.06
+    },
+    "M2SL": {
+      "label": "M2マネーサプライ",
+      "value": 22686.0,
+      "date": "2026-03-01",
+      "chg": 58.7
+    },
+    "IRLTLT01JPM156N": {
+      "label": "日本10Y国債",
+      "value": 2.515,
+      "date": "2026-04-01",
+      "chg": 0.17
+    }
+  },
+  "fear_greed": 56.0,
+  "fear_greed_label": "中立",
+  "risk_score": 30,
+  "risk_factors": [
+    {
+      "name": "円安過熱（キャリーリスク）",
+      "score": 6,
+      "val": "159円"
+    },
+    {
+      "name": "原油上昇",
+      "score": 5,
+      "val": "$105"
+    },
+    {
+      "name": "VIX低（楽観）",
+      "score": 2,
+      "val": "18.4"
+    },
+    {
+      "name": "株価変動正常",
+      "score": 2,
+      "val": "+11%"
+    },
+    {
+      "name": "金利差正常",
+      "score": 0,
+      "val": "0.50%"
+    }
+  ],
+  "signals": {
+    "buy": [],
+    "sell": []
+  },
+  "summary": "低リスク：通常の積み立て継続が最良の選択。",
+  "next_update": "2026-05-23",
+  "update_freq": "週1回（毎週土曜日頃）"
+}
