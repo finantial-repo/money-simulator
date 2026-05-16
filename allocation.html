@@ -295,10 +295,10 @@ function calculate() {
 
   // 結果を表示してスクロール
   var card = document.getElementById('resultCard');
-  card.style.display = '';
+  card.style.display = 'block';   // ← '' だとCSSのdisplay:noneが残るためblockを明示
   setTimeout(function() {
     card.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }, 100);
+  }, 200);
 }
 </script>
 </body>
