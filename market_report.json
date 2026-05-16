@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-05-16 17:26:28",
+  "timestamp": "2026-05-16 17:33:26",
   "prices": {
     "SP500": {
       "price": 7408.5,
@@ -90,16 +90,16 @@
       "vol": 8.3
     },
     "Bitcoin": {
-      "price": 78351.42,
+      "price": 78406.58,
       "chg_1w": -4.1,
       "chg_1m": 1.0,
-      "chg_3m": 11.1,
-      "chg_6m": -16.8,
+      "chg_3m": 11.2,
+      "chg_6m": -16.7,
       "vol": 40.9
     },
     "Ethereum": {
-      "price": 2193.8,
-      "chg_1w": -6.2,
+      "price": 2192.94,
+      "chg_1w": -6.3,
       "chg_1m": -5.4,
       "chg_3m": 5.8,
       "chg_6m": -29.1,
@@ -156,9 +156,9 @@
       "macd_signal": "上昇"
     },
     "Bitcoin": {
-      "rsi": 49.6,
-      "macd": -425.85,
-      "bb_pos": 0.37,
+      "rsi": 49.8,
+      "macd": -422.33,
+      "bb_pos": 0.38,
       "golden_cross": null,
       "rsi_signal": "中立",
       "macd_signal": "下降"
