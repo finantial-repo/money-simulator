@@ -1744,6 +1744,68 @@ document.getElementById('income').addEventListener('input', function() {
   document.getElementById('incomeHint').textContent = hint;
 });
 document.getElementById('income').dispatchEvent(new Event('input'));
+
+// ============================================================
+// URLパラメータから自動計算（WordPressブログのフォームから送信された場合）
+// 例: ?income=500&expense=18&age=30&emp=company&autorun=1
+// ============================================================
+(function() {
+  const p = new URLSearchParams(window.location.search);
+  if (!p.get('autorun')) return;
+
+  // フォームに値をセット
+  const set = (id, val) => {
+    const el = document.getElementById(id);
+    if (el && val !== null && val !== '') {
+      el.value = val;
+      el.dispatchEvent(new Event('input'));
+    }
+  };
+
+  set('income',    p.get('income'));
+  set('age',       p.get('age'));
+  set('retireAge', p.get('retire') || '65');
+
+  // 支出の合計を家賃欄に入れる（簡易版）
+  const expense = parseFloat(p.get('expense') || '0');
+  if (expense > 0) {
+    // 支出を項目別に分配（概算）
+    set('expRent', Math.round(expense * 0.5));   // 50% 家賃
+    set('expFood', Math.round(expense * 0.2));   // 20% 食費
+    set('expUtil', Math.round(expense * 0.1));   // 10% 光熱費
+    set('expOther', Math.round(expense * 0.2));  // 20% その他
+  }
+
+  // 雇用形態
+  const emp = p.get('emp') || 'company';
+  document.querySelectorAll('input[name="emp"]').forEach(r => {
+    r.checked = r.value === emp;
+  });
+
+  // iDeCo希望
+  const ideco = p.get('ideco') !== 'no';
+  document.querySelectorAll('input[name="idecoAge"]').forEach(r => {
+    r.checked = (r.value === 'yes') === ideco;
+  });
+
+  // 投資可能額を自動計算してからシミュレーション実行
+  if (typeof updateInvestableCalc === 'function') updateInvestableCalc();
+
+  // ページ読み込み後に自動実行
+  window.addEventListener('load', function() {
+    setTimeout(function() {
+      // フォームをスクロールして見える位置に
+      const resultEl = document.getElementById('result');
+      if (typeof calculate === 'function') {
+        calculate();
+        // 結果にスクロール
+        setTimeout(function() {
+          if (resultEl) resultEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 300);
+      }
+    }, 800);
+  });
+})();
 </script>
 
 </body>
