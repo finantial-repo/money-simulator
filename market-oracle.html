@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>市場リスク分析 | Market Oracle</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0d1117;--bg2:#161b22;--bg3:#21262d;--border:#30363d;--text:#e6edf3;--sub:#8b949e;--blue:#58a6ff;--green:#3fb950;--red:#f85149;--yellow:#d29922;--gold:#e8a020}
+body{font-family:'Noto Sans JP','Hiragino Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px}
+
+/* ─── Loading ─── */
+#loading{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:20px;gap:20px}
+.spin{width:48px;height:48px;border:4px solid var(--border);border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+#log{font-size:12px;color:var(--sub);text-align:center;max-width:320px;line-height:2;min-height:80px}
+#progress-wrap{width:280px;height:6px;background:var(--border);border-radius:3px;overflow:hidden}
+#progress-bar{height:6px;background:var(--blue);border-radius:3px;width:0%;transition:width .5s ease}
+
+/* ─── Dashboard ─── */
+#dashboard{display:none;max-width:960px;margin:0 auto;padding:16px}
+.header{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.header-title{font-size:16px;font-weight:800;color:var(--blue)}
+.header-meta{font-size:11px;color:var(--sub)}
+.next-badge{background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:4px 12px;font-size:11px;color:var(--gold)}
+
+.summary{background:linear-gradient(135deg,#1f2d3d,#162032);border:1px solid #388bfd40;border-radius:10px;padding:18px 20px;margin-bottom:16px}
+.summary-label{font-size:10px;font-weight:700;color:var(--blue);letter-spacing:3px;margin-bottom:8px}
+.summary-text{font-size:15px;line-height:1.8;color:#c9d1d9}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px}
+.card-label{font-size:10px;font-weight:700;color:var(--sub);letter-spacing:2px;margin-bottom:10px}
+
+/* ゲージ */
+.gauge-num{font-size:56px;font-weight:800;text-align:center;line-height:1;margin-bottom:6px}
+.gauge-text{font-size:14px;font-weight:700;text-align:center;margin-bottom:10px}
+.gauge-track{height:6px;border-radius:3px;background:linear-gradient(90deg,var(--blue),var(--green),var(--yellow),var(--red));margin-bottom:4px;position:relative}
+.gauge-marker{position:absolute;top:-5px;width:4px;height:16px;border-radius:2px;background:#fff;transform:translateX(-50%);transition:left .6s ease}
+.gauge-hint{font-size:10px;color:var(--sub);text-align:center}
+
+/* 価格テーブル */
+.price-table{width:100%;border-collapse:collapse}
+.price-table th{font-size:10px;font-weight:700;color:var(--sub);padding:5px 8px;text-align:left;border-bottom:1px solid var(--border)}
+.price-table td{padding:6px 8px;border-bottom:1px solid var(--bg3);font-size:12px}
+.price-table tr:last-child td{border-bottom:none}
+.up{color:var(--green);font-weight:700}
+.dn{color:var(--red);font-weight:700}
+.nu{color:var(--sub)}
+
+/* リスク */
+.risk-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--bg3)}
+.risk-row:last-child{border-bottom:none}
+.risk-name{flex:1;font-size:12px}
+.risk-val{font-size:10px;color:var(--sub);margin-top:2px}
+.risk-bar-bg{width:72px;height:6px;background:var(--bg3);border-radius:3px}
+.risk-bar{height:6px;border-radius:3px;transition:width .5s}
+.risk-badge{font-size:11px;font-weight:700;width:32px;text-align:right}
+
+/* 経済 */
+.eco-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.eco-card{background:var(--bg3);border-radius:6px;padding:10px 12px}
+.eco-name{font-size:10px;color:var(--sub);margin-bottom:4px}
+.eco-val{font-size:20px;font-weight:800}
+.eco-chg{font-size:10px;margin-top:3px}
+
+/* テクニカル */
+.tech-item{margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--border)}
+.tech-item:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.tech-name{font-size:13px;font-weight:700;margin-bottom:6px}
+.tech-row{display:flex;justify-content:space-between;font-size:12px;padding:3px 0}
+.tech-row span:first-child{color:var(--sub)}
+
+/* シグナル */
+.sig{padding:8px 12px;border-radius:6px;font-size:12px;margin-bottom:6px;display:flex;align-items:flex-start;gap:8px}
+.sig.buy{background:#1f3a2a;border:1px solid #2ea043}
+.sig.sell{background:#3a1f1f;border:1px solid #da3633}
+.sig-icon{flex-shrink:0;font-size:14px}
+
+/* エラー */
+#error{display:none;text-align:center;padding:60px 20px}
+.err-box{background:#3a1f1f;border:1px solid var(--red);border-radius:10px;padding:24px;max-width:400px;margin:0 auto}
+
+@media(max-width:600px){.grid2{grid-template-columns:1fr}.eco-grid{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+
+<!-- ローディング画面（進捗アニメーション付き） -->
+<div id="loading">
+  <div class="spin"></div>
+  <div id="progress-wrap"><div id="progress-bar"></div></div>
+  <div id="log">データを取得・分析中です...</div>
+  <p style="font-size:11px;color:#556677">この画面は自動的に切り替わります</p>
+</div>
+
+<!-- エラー -->
+<div id="error">
+  <div class="err-box">
+    <p style="font-size:18px;margin-bottom:8px">⚠️ データ取得失敗</p>
+    <p id="errMsg" style="font-size:13px;color:#f85149"></p>
+    <button onclick="loadData()" style="margin-top:16px;background:#238636;color:#fff;border:none;padding:8px 20px;border-radius:6px;cursor:pointer;font-size:13px">再試行</button>
+  </div>
+</div>
+
+<!-- ダッシュボード -->
+<div id="dashboard">
+
+  <div class="header">
+    <div>
+      <div class="header-title">📊 Market Oracle — 市場リスク分析</div>
+      <div class="header-meta" id="hdrMeta"></div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <span class="next-badge" id="nextBadge"></span>
+      <a href="https://moneykyoshitsu.com/market-oracle/" target="_parent" style="font-size:11px;color:#58a6ff;text-decoration:none">📰 解説記事へ</a>
+    </div>
+  </div>
+
+  <div class="summary">
+    <div class="summary-label">📋 今週の総合判定</div>
+    <div class="summary-text" id="summaryText"></div>
+  </div>
+
+  <!-- ゲージ -->
+  <div class="grid2">
+    <div class="card">
+      <div class="card-label">恐怖・強欲指数（Fear & Greed）</div>
+      <div class="gauge-num" id="fgNum"></div>
+      <div class="gauge-text" id="fgText"></div>
+      <div class="gauge-track"><div class="gauge-marker" id="fgMarker"></div></div>
+      <div class="gauge-hint">0=極度の恐怖（歴史的買い場）↔ 100=極度の強欲（要注意）</div>
+    </div>
+    <div class="card">
+      <div class="card-label">暴落リスクスコア</div>
+      <div class="gauge-num" id="rsNum"></div>
+      <div class="gauge-text" id="rsText"></div>
+      <div class="gauge-track"><div class="gauge-marker" id="rsMarker"></div></div>
+      <div class="gauge-hint">過去の危機パターン（逆イールド・VIX・円安等）と比較して算出</div>
+    </div>
+  </div>
+
+  <!-- 価格テーブル -->
+  <div class="grid2">
+    <div class="card">
+      <div class="card-label">株式・指数・債券</div>
+      <table class="price-table" id="stockTbl"></table>
+    </div>
+    <div class="card">
+      <div class="card-label">金・原油・為替・暗号資産</div>
+      <table class="price-table" id="assetTbl"></table>
+    </div>
+  </div>
+
+  <!-- リスク要因 -->
+  <div class="card" style="margin-bottom:12px">
+    <div class="card-label">暴落リスク要因（過去パターン比較）</div>
+    <div id="riskList"></div>
+  </div>
+
+  <!-- シグナル -->
+  <div class="card" style="margin-bottom:12px">
+    <div class="card-label">買い / 売りシグナル</div>
+    <div id="signals"></div>
+  </div>
+
+  <!-- 経済指標 -->
+  <div class="card" style="margin-bottom:12px">
+    <div class="card-label">経済指標（FRED データ）</div>
+    <div class="eco-grid" id="ecoGrid"></div>
+  </div>
+
+  <!-- テクニカル -->
+  <div class="card" style="margin-bottom:12px">
+    <div class="card-label">テクニカル指標</div>
+    <div id="techList"></div>
+  </div>
+
+  <div style="text-align:center;padding:12px 0;font-size:10px;color:#556677;border-top:1px solid var(--border);margin-top:4px">
+    データ: Yahoo Finance / FRED / CoinGecko ｜ 週1回更新 ｜ 本分析は教育目的です。投資判断はご自身でお願いします。
+  </div>
+
+</div>
+
+<script>
+var REPORT_URL = 'https://finantial-repo.github.io/money-simulator/market_report.json';
+
+// ── ログメッセージ（分析中の演出）──────────────────────────
+var LOG_STEPS = [
+  [5,  '市場データを取得中...'],
+  [15, 'S&P500・日経225・Nasdaqのデータを解析中...'],
+  [28, 'VIX（恐怖指数）・ハイイールドスプレッドを確認...'],
+  [40, '逆イールドカーブの状態を計算中...'],
+  [52, '円キャリートレードのリスクを評価中...'],
+  [65, '恐怖・強欲指数を算出中...'],
+  [78, '過去の暴落パターンと比較中...'],
+  [90, '分析レポートを生成中...'],
+  [98, '表示準備完了...'],
+];
+
+function animateProgress(onDone) {
+  var bar = document.getElementById('progress-bar');
+  var log = document.getElementById('log');
+  var pct = 0;
+  var stepIdx = 0;
+  var timer = setInterval(function() {
+    pct = Math.min(pct + 1.2, 99);
+    bar.style.width = pct + '%';
+    while (stepIdx < LOG_STEPS.length && pct >= LOG_STEPS[stepIdx][0]) {
+      log.textContent = LOG_STEPS[stepIdx][1];
+      stepIdx++;
+    }
+    if (pct >= 99) {
+      clearInterval(timer);
+      onDone();
+    }
+  }, 80);
+}
+
+// ── データ表示 ──────────────────────────────────────────────
+function chgStr(v) {
+  if (v == null) return '—';
+  return (v > 0 ? '+' : '') + parseFloat(v).toFixed(1) + '%';
+}
+function chgClass(v) {
+  return v > 0 ? 'up' : v < 0 ? 'dn' : 'nu';
+}
+function fgColor(v) {
+  if (v >= 70) return '#f85149';
+  if (v >= 55) return '#d29922';
+  if (v >= 40) return '#8b949e';
+  if (v >= 20) return '#58a6ff';
+  return '#3fb950';
+}
+function rsColor(v) {
+  return v >= 60 ? '#f85149' : v >= 40 ? '#d29922' : '#3fb950';
+}
+
+function makePriceRows(prices, keys) {
+  var hdr = '<tr><th>資産</th><th>価格</th><th>1週</th><th>1ヶ月</th></tr>';
+  var rows = keys.filter(function(k){ return prices[k]; }).map(function(k) {
+    var p = prices[k];
+    return '<tr><td style="font-weight:700">' + k + '</td>' +
+      '<td>' + parseFloat(p.price).toLocaleString() + '</td>' +
+      '<td class="' + chgClass(p.chg_1w) + '">' + chgStr(p.chg_1w) + '</td>' +
+      '<td class="' + chgClass(p.chg_1m) + '">' + chgStr(p.chg_1m) + '</td></tr>';
+  });
+  return hdr + rows.join('');
+}
+
+function render(d) {
+  // ローディング→ダッシュボード切替
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('progress-bar').style.width = '100%';
+  setTimeout(function() {
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+  }, 300);
+
+  // ヘッダー
+  document.getElementById('hdrMeta').textContent = '最終分析: ' + d.timestamp;
+  document.getElementById('nextBadge').textContent = '次回更新: ' + (d.next_update || '—');
+
+  // サマリー
+  document.getElementById('summaryText').textContent = d.summary || '分析完了';
+
+  // Fear & Greed
+  var fg = parseFloat(d.fear_greed) || 50;
+  document.getElementById('fgNum').textContent = Math.round(fg);
+  document.getElementById('fgNum').style.color = fgColor(fg);
+  document.getElementById('fgText').textContent = d.fear_greed_label || '';
+  document.getElementById('fgText').style.color = fgColor(fg);
+  document.getElementById('fgMarker').style.left = Math.min(96, fg) + '%';
+
+  // Risk Score
+  var rs = parseFloat(d.risk_score) || 30;
+  document.getElementById('rsNum').textContent = Math.round(rs);
+  document.getElementById('rsNum').style.color = rsColor(rs);
+  var rsLabel = rs >= 65 ? '高リスク' : rs >= 45 ? '中程度のリスク' : rs >= 25 ? 'やや注意' : '低リスク';
+  document.getElementById('rsText').textContent = rsLabel;
+  document.getElementById('rsText').style.color = rsColor(rs);
+  document.getElementById('rsMarker').style.left = Math.min(96, rs) + '%';
+
+  // 価格テーブル
+  var prices = d.prices || {};
+  document.getElementById('stockTbl').innerHTML = makePriceRows(prices, ['SP500','Nikkei','DAX','Nasdaq','US10Y','VIX']);
+  document.getElementById('assetTbl').innerHTML = makePriceRows(prices, ['Gold','Silver','Oil','DXY','USDJPY','Bitcoin','Ethereum']);
+
+  // リスク要因
+  var riskHtml = (d.risk_factors || []).slice(0, 8).map(function(r) {
+    var col = r.score >= 7 ? '#f85149' : r.score >= 4 ? '#d29922' : '#3fb950';
+    return '<div class="risk-row">' +
+      '<div class="risk-name">' + r.name + '<div class="risk-val">' + r.val + '</div></div>' +
+      '<div class="risk-bar-bg"><div class="risk-bar" style="width:' + (r.score*10) + '%;background:' + col + '"></div></div>' +
+      '<div class="risk-badge" style="color:' + col + '">' + r.score + '/10</div></div>';
+  }).join('');
+  document.getElementById('riskList').innerHTML = riskHtml || '<p style="color:#8b949e;font-size:12px">データなし</p>';
+
+  // シグナル
+  var sigs = d.signals || {};
+  var sigHtml = '';
+  (sigs.buy || []).forEach(function(s) {
+    sigHtml += '<div class="sig buy"><span class="sig-icon">✓</span><span>' + s + '</span></div>';
+  });
+  (sigs.sell || []).forEach(function(s) {
+    sigHtml += '<div class="sig sell"><span class="sig-icon">⚠</span><span>' + s + '</span></div>';
+  });
+  document.getElementById('signals').innerHTML = sigHtml || '<p style="color:#8b949e;font-size:12px">シグナルなし（中立環境）</p>';
+
+  // 経済指標
+  var ecoHtml = Object.entries(d.economic || {}).map(function(pair) {
+    var eco = pair[1];
+    var chgCol = eco.chg > 0 ? '#3fb950' : eco.chg < 0 ? '#f85149' : '#8b949e';
+    var warn = (pair[0] === 'T10Y2Y' && eco.value < 0) ? ' ⚠逆イールド' :
+               (pair[0] === 'CPIAUCSL' && eco.value > 320) ? ' ⚠高インフレ' : '';
+    return '<div class="eco-card">' +
+      '<div class="eco-name">' + eco.label + warn + '</div>' +
+      '<div class="eco-val">' + parseFloat(eco.value).toFixed(2) + '</div>' +
+      '<div class="eco-chg" style="color:' + chgCol + '">' +
+      (eco.chg > 0 ? '+' : '') + parseFloat(eco.chg).toFixed(3) + '</div></div>';
+  }).join('');
+  document.getElementById('ecoGrid').innerHTML = ecoHtml || '<p style="color:#8b949e;font-size:12px">FRED APIデータなし</p>';
+
+  // テクニカル
+  var techHtml = Object.entries(d.technical || {}).map(function(pair) {
+    var name = pair[0], t = pair[1];
+    var rsiCol = t.rsi > 70 ? '#f85149' : t.rsi < 30 ? '#3fb950' : '#8b949e';
+    var macdCol = t.macd > 0 ? '#3fb950' : '#f85149';
+    var gcCol = t.golden_cross === true ? '#3fb950' : t.golden_cross === false ? '#f85149' : '#8b949e';
+    var gcText = t.golden_cross === true ? '🟢 ゴールデンクロス（強気）' :
+                 t.golden_cross === false ? '🔴 デッドクロス（弱気）' : '計算中';
+    return '<div class="tech-item">' +
+      '<div class="tech-name">' + name + '</div>' +
+      '<div class="tech-row"><span>RSI(14)</span><span style="color:' + rsiCol + ';font-weight:700">' + parseFloat(t.rsi).toFixed(1) + ' — ' + t.rsi_signal + '</span></div>' +
+      '<div class="tech-row"><span>MACD</span><span style="color:' + macdCol + ';font-weight:700">' + t.macd_signal + '</span></div>' +
+      '<div class="tech-row"><span>ボリンジャー位置</span><span>' + parseFloat(t.bb_pos).toFixed(2) + '</span></div>' +
+      '<div class="tech-row"><span>MA50/MA200</span><span style="color:' + gcCol + '">' + gcText + '</span></div>' +
+      '</div>';
+  }).join('');
+  document.getElementById('techList').innerHTML = techHtml || '<p style="color:#8b949e;font-size:12px">テクニカルデータなし</p>';
+}
+
+function loadData() {
+  document.getElementById('error').style.display = 'none';
+  document.getElementById('loading').style.display = 'flex';
+  document.getElementById('dashboard').style.display = 'none';
+
+  // 進捗アニメーション開始
+  animateProgress(function() {
+    // アニメーション完了後にデータ表示
+  });
+
+  // 並行してデータ取得
+  fetch(REPORT_URL + '?_=' + Date.now())
+    .then(function(res) {
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      return res.json();
+    })
+    .then(function(data) {
+      // 最低でも3秒は分析アニメーションを見せる
+      var elapsed = Date.now() - startTime;
+      var delay = Math.max(0, 3000 - elapsed);
+      setTimeout(function() { render(data); }, delay);
+    })
+    .catch(function(err) {
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('errMsg').textContent = err.message + ' — JSONの取得に失敗しました。save_and_deployを実行してください。';
+      document.getElementById('error').style.display = 'block';
+    });
+}
+
+var startTime = Date.now();
+loadData();
+</script>
+</body>
+</html>
